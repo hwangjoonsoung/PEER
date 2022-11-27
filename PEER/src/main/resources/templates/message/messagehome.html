@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/* head('메인 페이지') 수정하면 수정한 타이틀 들어갑니다 */-->
+<th:block th:replace="/common/layout.html :: head('쪽지')"></th:block>
+<body>
+	<table class="table table-striped table-hover" style="width:550px" id="message">
+	  	<thead>
+	    <tr>
+	      <th scope="col" id="msgchk"><div class=col-1><input type="checkbox" onclick="selectAll(this)"></div></th>
+	      <td scope="col" id="msgsender" style="text-align:center;">보낸회원</td>
+	      <td scope="col" id="msgcontent" style="min-width:280px; text-align:center;">내용</td>
+	      <td scope="col" id="msgdate" style="text-align:center;">보낸시간</td>
+	    </tr>
+	  	</thead>
+  	  	<tbody>
+		<!--/* 받은 쪽지가 없을 경우 */-->		
+	<th:block th:if="${#lists.isEmpty(msglist)}">
+		<tr>
+	        <th scope="col" id="msgchk"><div class=col-1></div></th>
+	        <td scope="col" id="msgsender"></td>
+	        <td scope="col" id="msgcontent">받은 쪽지가 없습니다</td>
+	        <td scope="col" id="msgdate"></td>
+		</tr>
+		</tbody>
+	</th:block>
+		
+		    
+		<!--/* 받은 쪽지가 있을 경우 	*/-->	
+	<th:block th:if="${!#lists.isEmpty(msglist)}">
+		    <tr th:each="msglist : ${msglist}">
+		      	<th scope="col" id="msgchk" >
+		      		<div class=col-1><input type="checkbox" name='chk' th:value="${msglist.message_num}"></div>
+		      	</th>
+		      	<td scope="col" id="msgsender">
+		      		<a th:onclick="msgwritePopup()">
+		      		<span class="d-inline-block text-truncate" style="font-weight:normal; max-width: 100px;" 
+		      			th:text=${msglist.message_sender_nick}></span>	
+					<script th:inline="javascript">
+						// 쪽지 보내기 팝업창
+						function msgwritePopup(){
+							const num = [[${msglist.message_sender_num}]];
+							window.open("/msgwrite.Intercept?message_sender_num="+num,"쪽지보내기","width=580, height=600, top=210, left=710");
+						}
+					</script>
+		      		</a>
+		      	</td>
+		      	<td scope="col" id="msgcontent">
+		      		<a th:href="@{/msgopen.Intercept?page={page}&message_num={message_num}(page=${pg.page}, message_num=${msglist.message_num})}">
+			      	<span class="d-inline-block text-truncate" style="color:black; font-weight:normal; min-width:280px; max-width: 280px;" 
+			      		th:text=${msglist.message_content}></span></a>
+			    </td>
+		      	<td scope="col" id="msgdate"><span class="d-inline-block text-truncate" style="font-weight:normal; max-width: 150px;" 
+		      		th:text="${#dates.format(msglist.message_date,'yy/MM/dd')}"></span></td>
+		    </tr>
+	
+
+	  	</tbody>
+	  	</th:block>
+	</table>
+	
+	
+	<th:block th:if="${!#lists.isEmpty(msglist)}">
+	<div class="fixed-bottom" style="margin-top:10px">
+		<!--/* 삭제버튼 */-->	
+		<div class="d-flex flex-row justify-content-start">
+		<form action="/msgdel" method=post id="msgDel">
+			<!--/* 컨트롤러로 전달되는 값 */-->	
+			<input type="hidden" id="checklist" name="checklist" th:value="null"> 
+			<input type="hidden" name="page" th:value="${pg.page}"> 
+			<input type="button" class="btn btn-secondary btn-sm" value="삭제">
+		</form>
+		</div>
+		<div class="d-flex flex-row justify-content-center">
+			<nav aria-label="Page navigation example">
+			  <ul class="pagination">
+			  	<!--/* 첫페이지 버튼 */-->
+			    <li class="page-item">
+			    <th:block th:if="${pg.page} > 5">
+			      <a class="page-link" th:href="@{/message.Intercept?page={page}(page=1)}" aria-label="Previous">
+			        <span aria-hidden="true">First</span>
+			      </a>
+			    </th:block>
+			  	<!--/* 이전페이지 버튼 */-->
+			    <li th:if="${pg.page} != 1" class="page-item"><a class="page-link" th:href="@{/message.Intercept?page={page}(page=${pg.page-1})}">이전</a></li>
+			  	<!--/* 페이징 버튼 */-->
+				<li th:each="page : ${#numbers.sequence(pg.pagingstart, pg.pagingend)}" class="page-item" 
+					th:classappend="${page} == ${pg.page} ? 'active'">
+				<a class="page-link" th:href="@{/message.Intercept?page={page}(page=${page})}">
+					<span th:text="${page}"></span></a>
+				</li>
+					
+			  	<!--/* 다음페이지 버튼 */-->
+				<li class="page-item">
+			    <li th:if="${pg.page != pg.pageTotal}" class="page-item"><a class="page-link" th:href="@{/message.Intercept?page={page}(page=${pg.page+1})}">Next</a></li>
+			  	<!--/* 마지막버튼 */-->
+				<li class="page-item">
+			    <th:block th:if="${pg.pageTotal} > 5">
+			      <a class="page-link" th:href="@{/message.Intercept?page={page}(page=${pg.pageTotal})}" aria-label="Next">
+			        <span aria-hidden="true">Last</span>
+			      </a>
+			    </th:block>
+			    </li>
+			  </ul>
+			</nav>
+		</div>
+	</div>
+	</th:block>
+	
+
+	<script th:inline="javascript">
+	// 전체선택
+	function selectAll(selectAll)  {
+		var checkboxes 
+		       = document.getElementsByName('chk');
+		checkboxes.forEach((checkbox) => {
+			checkbox.checked = selectAll.checked;
+		});
+	}
+	
+	// 선택된 쪽지 저장하는 메소드
+	function chkDel(){
+		var checklist = "";
+		$("input[name=chk]:checked").each(function(){
+			checklist += $(this).val() + "/";
+		});
+		
+		$('#checklist').val(checklist);
+	}
+	
+	// 삭제 버튼 클릭
+	$(document).ready(function(){
+		$('#msgDel').on('click',function(){
+			chkDel();
+			console.log($('#checklist').val());
+			
+			if($("input[name=chk]").is(":checked")){
+				console.log("체크있음");
+				$('#msgDel').submit();
+			}else{
+				console.log("체크없음");
+				return false;
+			}
+			
+		});
+		
+	});
+	</script>
+</body>
+</html>

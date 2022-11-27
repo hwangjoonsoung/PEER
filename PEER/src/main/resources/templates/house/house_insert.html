@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<th:block th:replace="/common/layout.html :: head('Peer')"></th:block>
+<th:block th:replace="/common/header :: header"></th:block>
+<link rel="stylesheet" href="css/daterangepicker.css">
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<body>
+
+<div class="wrap" style="margin-bottom: 10%;">
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm-4">
+      <h2 style="font-family: 'NanumSquare';">자신의 숙소를 등록해보세요!</h2>
+      <div>
+      	<img src="/img/house/host.png" width="350px" style="margin-top: 25px;">
+      </div>
+      <h3 class="mt-4" style="font-family: 'NanumSquare';">이동하기</h3>
+      <p style="font-family: 'NanumSquare';">즐거운 여행으로 가는 지름길!</p>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a class="nav-link active" href="#" style="font-size: 9pt;">상단으로 이동</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/">메인</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="BoardList.do">커뮤니티</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">고객센터</a>
+        </li>
+      </ul>
+      <hr class="d-sm-none">
+    </div>
+    <div class="col-sm-8">
+      <h2 style="font-family: 'NanumSquare';">숙소 등록하기</h2>
+      
+      <form action="house_insert_ok.Interceptor" method="post" name="houseinfo"
+		enctype="multipart/form-data">
+		<input type="hidden" name="house_x" value=""> <input
+			type="hidden" name="house_y" value="">
+
+		<table align="center" class="table table-borderless" style="vertical-align: middle;">
+			<tr align="center" bgcolor="">
+				<!-- 첫줄 -->
+			</tr>
+			<tr>
+				<th>숙소 이름</th>
+				<th><input type="text" id="house_name" name="house_name"
+					autofocus="autofocus" required="required" class="form-control"></th>
+			</tr>
+			<tr>
+				<th>
+					<div>지도</div>
+				</th>
+				<td>
+					<div id="map" style="width: 400px; height: 300px; display: none"></div>
+				</td>
+			</tr>
+
+			<script
+				src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+			<script
+				src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5efe9f5d0b275d90cddaffeb298d18d1&libraries=services"></script>
+			<script>
+				var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+				mapOption = {
+					center : new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+					level : 5
+				// 지도의 확대 레벨
+				};
+
+				//지도를 미리 생성
+				var map = new daum.maps.Map(mapContainer, mapOption);
+				//주소-좌표 변환 객체를 생성
+				var geocoder = new daum.maps.services.Geocoder();
+				//마커를 미리 생성
+				var marker = new daum.maps.Marker({
+					position : new daum.maps.LatLng(37.537187, 127.005476),
+					map : map
+				});
+				function addrFind() {
+					new daum.Postcode(
+							{
+								oncomplete : function(data) {
+									// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+									// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+									// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+									var addr = ''; // 주소 변수
+									var extraAddr = ''; // 참고항목 변수
+
+									//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+									if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+										addr = data.roadAddress;
+									} else { // 사용자가 지번 주소를 선택했을 경우(J)
+										addr = data.jibunAddress;
+									}
+									// 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+									if (data.userSelectedType === 'R') {
+										// 법정동명이 있을 경우 추가한다. (법정리는 제외)
+										// 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+										if (data.bname !== ''
+												&& /[동|로|가]$/g.test(data.bname)) {
+											extraAddr += data.bname;
+										}
+										// 건물명이 있고, 공동주택일 경우 추가한다.
+										if (data.buildingName !== ''
+												&& data.apartment === 'Y') {
+											extraAddr += (extraAddr !== '' ? ', '
+													+ data.buildingName
+													: data.buildingName);
+										}
+										// 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+										if (extraAddr !== '') {
+											extraAddr = ' (' + extraAddr + ')';
+										}
+										// 조합된 참고항목을 해당 필드에 넣는다.
+										document.getElementById("tbox4").value = extraAddr;
+									} else {
+										document.getElementById("tbox4").value = '';
+									}
+									// 우편번호와 주소 정보를 해당 필드에 넣는다.
+									document.getElementById('tbox1').value = data.zonecode;
+									document.getElementById("tbox2").value = addr;
+									// 커서를 상세주소 필드로 이동한다.
+									document.getElementById("tbox3").focus();
+
+									// 주소값
+									document.houseinfo.address.value = addr
+											+ extraAddr;
+									geocoder
+											.addressSearch(
+													data.address,
+													function(results, status) {
+														// 정상적으로 검색이 완료됐으면
+														if (status === daum.maps.services.Status.OK) {
+
+															var result = results[0]; //첫번째 결과의 값을 활용
+
+															// 해당 주소에 대한 좌표를 받아서
+															var coords = new daum.maps.LatLng(
+																	result.y,
+																	result.x);
+															var house_x = result.x;
+															var house_y = result.y;
+
+															// x, y 좌표값
+															document.houseinfo.house_x.value = house_x;
+															document.houseinfo.house_y.value = house_y;
+
+															// 지도를 보여준다.
+															mapContainer.style.display = "block";
+															map.relayout();
+															// 지도 중심을 변경한다.
+															map
+																	.setCenter(coords);
+															// 마커를 결과값으로 받은 위치로 옮긴다.
+															marker
+																	.setPosition(coords)
+														}
+													});
+								}
+							}).open();
+				}
+			</script>
+
+
+			<tr>
+				<th>주소</th>
+				<!-- zib코드 입력-->
+				<td id="house_address"><input type="text" id="tbox1"
+					placeholder="우편번호" class="form-control" style="width: 200px;">
+					
+					<input type="button" class="btn btn-primary btn-sm" 
+					onclick="addrFind()" value="우편번호 찾기"><br> 
+					
+					<input class="form-control" style="width: 200px;"
+					type="text" name="tbox2" id="tbox2" placeholder="주소" size=28>
+					
+					<input class="form-control" style="width: 150px;" type="text" name="tbox4" id="tbox4" placeholder="참고항목"
+					size=28> 
+					
+					<input type="text" id="tbox3" name="tbox3" class="form-control" style="width: 200px;" 
+					placeholder="상세주소" required="required"> 
+					
+					<input
+					type="hidden" id="address" name="address" value=""></td>
+			</tr>
+
+			<tr>
+				<th>숙소 사진 등록</th>
+				<td><div id='att_zone'></div>
+				<input class="btn btn-light" type='file' name="myfile" id='btnAtt' multiple='multiple' /><br>
+				<a style="font-size: 9pt; color: red;">* ctrl키로 다중 선택하세요</a>
+
+  <script type="text/javascript">
+  ( /* att_zone : 이미지들이 들어갈 위치 id, btn : file tag id */
+		  imageView = function imageView(att_zone, btn){
+
+		    var attZone = document.getElementById(att_zone);
+		    var btnAtt = document.getElementById(btn)
+		    var sel_files = [];
+		    
+		    // 이미지와 체크 박스를 감싸고 있는 div 속성
+		    var div_style = 'display:inline-block;position:relative;'
+		                  + 'width:150px;height:120px;margin:5px;border:1px solid #00f;z-index:1';
+		    // 미리보기 이미지 속성
+		    var img_style = 'width:100%;height:100%;z-index:none';
+		    // 이미지안에 표시되는 체크박스의 속성
+		    var chk_style = 'width:30px;height:30px;position:absolute;font-size:24px;'
+		                  + 'right:0px;bottom:0px;z-index:999;background-color:rgba(255,255,255,0.1);color:#f00';
+		  
+		    btnAtt.onchange = function(e){
+		      var files = e.target.files;
+		      var fileArr = Array.prototype.slice.call(files)
+		      for(f of fileArr){
+		        imageLoader(f);
+		      }
+		    }  
+		    
+		    /*첨부된 이미리즐을 배열에 넣고 미리보기 */
+		    imageLoader = function(file){
+		      sel_files.push(file);
+		      var reader = new FileReader();
+		      reader.onload = function(ee){
+		        let img = document.createElement('img')
+		        img.setAttribute('style', img_style)
+		        img.src = ee.target.result;
+		        attZone.appendChild(makeDiv(img, file));
+		      }
+		      
+		      reader.readAsDataURL(file);
+		    }
+		    
+		    /*첨부된 파일이 있는 경우 checkbox와 함께 attZone에 추가할 div를 만들어 반환 */
+		    makeDiv = function(img, file){
+		      var div = document.createElement('div')
+		      div.setAttribute('style', div_style)
+		      
+		      var btn = document.createElement('input')
+		      btn.setAttribute('type', 'button')
+		      btn.setAttribute('value', 'x')
+		      btn.setAttribute('delFile', file.name);
+		      btn.setAttribute('style', chk_style);
+		      btn.onclick = function(ev){
+		        var ele = ev.srcElement;
+		        var delFile = ele.getAttribute('delFile');
+		        for(var i=0 ;i<sel_files.length; i++){
+		          if(delFile== sel_files[i].name){
+		            sel_files.splice(i, 1);      
+		          }
+		        }
+		        
+		        dt = new DataTransfer();
+		        for(f in sel_files) {
+		          var file = sel_files[f];
+		          dt.items.add(file);
+		        }
+		        btnAtt.files = dt.files;
+		        var p = ele.parentNode;
+		        attZone.removeChild(p)
+		      }
+		      div.appendChild(img)
+		      div.appendChild(btn)
+		      return div
+		    }
+		  }
+		)('att_zone', 'btnAtt')
+    </script></td></tr>
+
+			<tr>
+				<th>숙소 유형</th>
+				<th><input type="radio" class="form-check-input" required="required" id="ht"
+					name="house_form" value="호텔">호텔&nbsp&nbsp&nbsp&nbsp
+					<input type="radio" id="ps" class="form-check-input" 
+					name="house_form" value="펜션">펜션&nbsp&nbsp&nbsp&nbsp <input type="radio" id="mt" class="form-check-input" 
+					name="house_form" value="모텔">모텔&nbsp&nbsp&nbsp&nbsp <input type="radio" id="gh" class="form-check-input" 
+					name="house_form" value="게스트하우스">게스트하우스</th>
+			</tr>
+			<tr>
+				<th>쉐어 가능여부</th>
+				<th><label for="house_share"> <input type="radio" class="form-check-input" 
+						required="required" id="house_share" name="house_share" value="1">일반&nbsp&nbsp&nbsp&nbsp
+						<input type="radio" required="required" id="house_share" class="form-check-input" 
+						name="house_share" value="2">쉐어
+				</label></th>
+			</tr>
+			<tr>
+				<th>사용 가능 인원</th>
+				<th><input type="number" id="house_capacity" class="form-control" style="width: 150px;" 
+					name="house_capacity" max=20 min=1 required="required"></th>
+			</tr>
+			<tr>
+				<th>성수기 기간 설정</th>
+				<td><input type="text" name="daterange" class="form-control" style="width: 300px;">
+				<script>
+				</script></td></tr>
+			<tr>
+				<th>숙소 가격</th>
+				<td> 
+				<a style="font-size: 10pt; font-weight: bold;">비성수기(주중)</a> <input type="text"   class="form-control" style="width: 200px;" id="hprice_bweek" name="hprice_bweek" pattern="[0-9]+" required placeholder="숫자만 입력하세요."><br>
+				<a style="font-size: 10pt; font-weight: bold;">비성수기(주말)</a> <input type="text"   class="form-control" style="width: 200px;" id="hprice_bweekend" name="hprice_bweekend" pattern="[0-9]+" required placeholder="숫자만 입력하세요."><br>
+				<a style="font-size: 10pt; font-weight: bold;">성수기(주중)</a> <input type="text"   class="form-control" style="width: 200px;" id="hprice_sweek" name="hprice_sweek" pattern="[0-9]+" required placeholder="숫자만 입력하세요."><br>
+				<a style="font-size: 10pt; font-weight: bold;">성수기(주말)</a> <input type="text"   class="form-control" style="width: 200px;" id="hprice_sweekend" name="hprice_sweekend" pattern="[0-9]+" required placeholder="숫자만 입력하세요."><br>
+				</td>
+			</tr>
+			<tr>
+				<th>숙소 상세 정보</th>
+				<td><lable for="house_detail" class="form-check-label"> 
+				<input type="checkbox" class="form-check-input"name="house_detail" value="WIFI">WIFI &nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="커피머신">커피머신 &nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="TV">TV &nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="PC">PC &nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="세탁기">세탁기 <BR>
+					<input type="checkbox" class="form-check-input" name="house_detail" value="주방조리가능">주방조리가능&nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="조리도구">조리도구&nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="세면도구">세면도구&nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="주차장">주차장<br>
+					<input type="checkbox" class="form-check-input" name="house_detail" value="수영장">수영장&nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="냉난방기">냉난방기&nbsp&nbsp&nbsp&nbsp
+					<input type="checkbox" class="form-check-input" name="house_detail" value="바베큐">바베큐&nbsp&nbsp&nbsp&nbsp
+					</lable></td>
+			</tr>
+			<tr>
+				<th>숙소 추가 정보</th>
+				<td><textarea id="house_detail2" name="house_detail2" cols="55" class="form-control" 
+						rows="5" maxlength="700" value=""></textarea></td>
+			</tr>
+			<tr align=center>
+				<td colspan=2><input type="submit" class="btn btn-primary btn-sm" value="숙소 등록"> 
+				<input type="reset" class="btn btn-secondary btn-sm" value="다시입력">
+				<input type="button" class="btn btn-outline-primary btn-sm" value="목록" onclick="location.href='host_house_list.Interceptor'"></td>
+			</tr>
+		</table>
+		<br>
+
+	</form>
+</body>
+      
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+<!-- js -->
+      <script src="js/jquery-3.4.1.min.js"></script>
+      <script src="js/popper.min.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+      <script src="js/owl.carousel.min.js"></script>
+      <script src="js/jquery.animateNumber.min.js"></script>
+      <script src="js/jquery.waypoints.min.js"></script>
+      <script src="js/jquery.fancybox.min.js"></script>
+      <script src="js/aos.js"></script>
+      <script src="js/moment.min.js"></script>
+      <script src="js/daterangepicker.js"></script>
+      <script src="js/typed.js"></script>
+      <script src="js/custom.js"></script>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('Peer')"></th:block>
+<th:block th:replace="/common/header :: header"></th:block>
+
+<!-- 지도 버튼 -->
+<button type="button" id="list" onclick="fun1(); fun2();">
+	<span>목록 보기</span>
+</button>
+<div id="map">
+	<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
+	<div class="custom_zoomcontrol radius_border">
+		<span onclick="zoomIn()"><img src="img/plus.png" alt="확대"></span>
+		<span onclick="zoomOut()"><img src="img/minus.png" alt="축소"></span>
+	</div>
+</div>
+
+<div id="map_list">
+		<div class="card" th:each="hlist : ${hosthouselist}">
+			<a th:href="@{/HouseView(house_num=${hlist.house_num},page=${page},state='cont')}">
+				<img class="card-img-top" src="housefiles/33b72c0a-57f1-4958-aaa7-594e92b8232e11.png" style="width: 390px;"> <!-- 수정할 부분 -->
+				<div class="card-body">
+					<span class="card-title">[[${hlist.house_name}]]</span>
+					<p class="card-text">[[${hlist.house_address}]]</p>
+				</div>
+			</a>
+		</div>
+</div>
+
+<script type="text/javascript"
+	src="//dapi.kakao.com/v2/maps/sdk.js?appkey=95a4da028c3d633f5c747045e4fae8dd"></script>
+<!-- <script src="js/search.js"></script>  -->
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	//	지도 버튼 
+	var subs = document.querySelector("#list");
+
+	subs.addEventListener("click", function fun1() {
+		if (subs.innerText === '목록 보기') {
+			subs.innerText = '지도 펼치기 ';
+		} else
+			subs.innerText = '목록 보기';
+	});
+
+	subs.addEventListener("click", function fun2() {
+		if (subs.innerText === '지도 펼치기') {
+			window.scrollTo({
+				top : document.querySelector("#map_list").offsetTop,
+				behavior : "smooth"
+			});
+		} else
+			window.scrollTo({
+				top : 0,
+				left : 0,
+				behavior : "smooth"
+			});
+	});
+
+	// 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+	function zoomIn() {
+		map.setLevel(map.getLevel() - 1);
+	}
+
+	// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+	function zoomOut() {
+		map.setLevel(map.getLevel() + 1);
+	}
+
+	/*[# th:each="hcont : ${hosthouselist}"]*/
+	var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
+    mapOption = { 
+        center: new kakao.maps.LatLng(/*[[${hcont.house_y}]]*/, /*[[${hcont.house_x}]]*/), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };
+	/*[/]*/
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+ 
+
+//마커를 표시할 위치와 내용을 가지고 있는 객체 배열입니다 
+var positions = [];
+/*[# th:each="hcont : ${hosthouselist}"]*/
+positions.push( <!-- 수정할 부분 -->
+    {content: '<div class="info">'
+			+ '<div class="title">'
+			+ /*[[${hcont.house_name}]]*/
+			+ '</div>'
+			+ '<div class="body">'
+			+ '<div class="ellipsis">' + /*[[${hcont.house_address}]]*/ + '</div>'
+			+ '<div><a th:href="@{/HouseView(house_num=${hlist.house_num},page=${page}}" style="text-decoration:none" class="link">숙소 정보</a></div>'
+			+ '</div>' + '</div>', 
+        latlng: new kakao.maps.LatLng(/*[[${hcont.house_y}]]*/, /*[[${hcont.house_x}]]*/)
+			})
+/*[/]*/
+
+for (var i = 0; i < positions.length; i ++) {
+    // 마커를 생성합니다
+    var marker = new kakao.maps.Marker({
+        map: map, // 마커를 표시할 지도
+        position: positions[i].latlng // 마커의 위치
+    });
+
+    // 마커에 표시할 인포윈도우를 생성합니다 
+    var infowindow = new kakao.maps.InfoWindow({
+        content: positions[i].content, // 인포윈도우에 표시할 내용
+        removable : true
+    });
+
+   kakao.maps.event.addListener(marker, 'click', clickTest(map, marker, infowindow));
+}
+
+
+function clickTest(map, marker, infowindow){
+	return function() {
+	infowindow.open(map, marker);
+	}
+};
+/*]]>*/
+</script>
+
+</html>

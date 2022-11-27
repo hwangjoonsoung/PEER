@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('매칭성공')"/>
+<th:block th:replace="/common/header.html :: header"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<head>
+<meta charset="UTF-8">
+
+<style>
+
+	.comment {
+		margin-top: 150px;
+		margin-bottom: 150px;
+		
+		font-family: 'NanumSquare';
+		font-weight: bolder;
+		font-size: 11pt;
+	}
+
+</style>
+
+</head>
+<body>
+<div style="position: relative; min-height: 768px;">
+	
+	<div class="comment" align="center">
+		<img src="/img/share/approve.png">
+		
+		<div class="Number" align="center">
+			쉐어 파트너 매칭이 성사되었습니다!<br>
+			상대방 연락처 <a style="font-size: 15pt;">[[${Number.user_phone}]]</a> 를 통해<br>
+			충분한 대화를 나눠보시고
+			신중하게 최종결정을 해주세요!
+		</div><br><br>
+		
+			<input type="button" value="쉐어확정" class="btn btn-success" 
+				th:onclick="|location.href='@{ShareResult.Intercept(type=Y, book_num=${book_num})}'|">
+			<input type="button" value="취소하기" class="btn btn-danger" 
+				th:onclick="|location.href='@{ShareResult.Intercept(type=N, book_num=${book_num})}'|">
+			<input type="button" value="되돌아가기" class="btn btn-primary" 
+				th:onclick="|location.href='@{MyBooking.Intercept}'|">
+	
+	</div>
+
+</div>
+</body>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

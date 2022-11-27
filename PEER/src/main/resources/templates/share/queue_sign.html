@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('peer')"/>
+<th:block th:replace="/common/header.html :: header"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<head>
+
+<style>
+
+	.comment {
+		margin-top: 150px;
+		margin-bottom: 150px;
+		
+		font-family: 'NanumSquare';
+		font-weight: bolder;
+		font-size: 15pt;
+	}
+
+</style>
+
+
+<meta charset="UTF-8">
+
+<title>peer</title>
+</head>
+<body>
+<div style="position: relative; min-height: 768px;">
+
+	<!-- 멤버 정보 보여주기 -->
+	<div class="comment" align="center">
+		<img src="/img/share/sign.png" width="400px"> 
+		<br><br>
+		쉐어요청을 하였습니다!<br>
+		상대방의 수락을 기다리세요.
+		<br><br>
+		
+		<div class="Choice" align="center">
+			<input type="button" value="예약내역" 
+				class="btn btn-light" th:onclick="|location.href='@{MyBooking.Intercept}'|"/>
+			<input type="button" value="메인" 
+				class="btn btn-outline-primary" th:onclick="|location.href='@{/}'|"/>
+		</div>
+		
+	</div>
+	
+	
+</div>
+
+</body>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

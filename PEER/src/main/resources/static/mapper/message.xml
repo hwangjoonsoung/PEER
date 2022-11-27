@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="peer.dao.message.MessageMapper">
+	<!-- 쪽지 리스트 -->
+	<select id="msgList" parameterType="int" resultType="peer.model.message.MessageBean">
+<![CDATA[ 
+		select * from (select rownum as rnum, msg.* 
+			from (select * from message where message_receiver_num = #{user_num}
+				order by message_date asc) msg)
+		where rnum <= #{startPage} and rnum >= #{endPage} order by message_num desc
+]]>
+	</select>
+	
+	<!-- 쪽지 전체 개수 -->
+	<select id="msgTotal" parameterType="int" resultType="int">
+		select count(*) from message where message_receiver_num = #{user_num}
+	</select>
+	
+	<!-- 쪽지 작성하기&답장하기 -->
+	<insert id="msgSend">
+	    insert into message values(message_seq.nextval, #{message_sender_num}, #{message_sender_nick},
+	    	 #{message_receiver_num}, #{message_receiver_nick}, sysdate, #{message_content})
+	</insert>
+	
+	<!-- 회원 권한 체크 -->
+	<select id="userCheck" parameterType="int" resultType="int">
+		select user_authority from user_info where user_num = #{user_num}
+	</select>
+	
+	<!-- 회원번호에서 닉네임 추출-->
+	<select id="nickFromNum" parameterType="int" resultType="String">
+		select user_nickname from user_info where user_num = #{user_num}	
+	</select>
+	
+	<!-- 쪽지 상세보기 -->
+	<select id="msgOpen" parameterType="int" resultType="peer.model.message.MessageBean">
+		select * from message where message_num = #{message_num}
+	</select>
+	
+	
+	<!-- 쪽지 삭제 -->
+	<delete id="msgDel" parameterType="int">
+		delete from message where message_num = #{message_num}
+	</delete>
+
+</mapper>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/* head('메인 페이지') 수정하면 수정한 타이틀 들어갑니다 */-->
+<th:block th:replace="/common/layout.html :: head('쪽지')"></th:block>
+<th:block th:replace="/common/header :: header"></th:block>
+<body>
+<div style="margin-top:200px;min-height:400px">
+	<!--/* 위시리스트가 없을시*/-->
+	<div th:if="${#lists.isEmpty(wishlist)}" style="display: flex; justify-content: center; align-items:center;">
+		<h2>위시리스트가 없습니다</h2>
+	</div>
+		
+		<div align="center">
+		<button type="button"  class="btn btn-primary btn-sm" style="margin-left:10px" 
+			id="wishlist" th:onclick="history.back(-1)">뒤로가기</button>
+		</div>
+	</div>
+	<!--/* 위시리스트가 있을시*/-->
+	<div th:if="${!#lists.isEmpty(wishlist)}">
+		<th:block th:each="wishlist : ${wishlist}">
+		<div class="card" style="width: 18rem;">
+		  <img th:src="${wishlist.house_photo}" class="card-img-top" alt="#" th:href="#">
+		  <div class="card-body">
+		    <h5 class="card-title">[[${wishlist.house_name}]]</h5>
+		    <a th:href="#" class="btn btn-primary">상세보기</a>
+		    <a th:href="/delwish?house_num=${wishlist.house_num}" class="btn btn-outline-secondary"></a>
+		  </div>
+		</div>
+		</th:block>
+	</div>
+</body>
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

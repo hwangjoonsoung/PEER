@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="peer.dao.booking.HouseViewDao">
+
+
+<!-- 유저 정보 불러오기 -->
+<select id="getUserinfo" parameterType="int" resultType="peer.model.member.MemberBean">
+select * from user_info where user_num = #{user_num} 
+</select>
+
+
+<!-- 호스트 이름 불러오기 -->
+<select id="getHostname" parameterType="peer.model.house.HouseBean" resultType="peer.model.booking.HouseViewBean">
+select user_name from user_info where user_num = (select user_num from house where house_num = #{house_num})
+</select>
+
+
+<!-- 예약 정보 입력 -->
+<insert id="bookingInsert" parameterType="peer.model.booking.BookingBean">
+insert into booking(book_num, house_num, total_price, user_num, house_price, checkin, checkout) values(booking_seq.nextval, 
+#{house_num}, #{total_price}, #{user_num}, #{house_price}, #{checkin}, #{checkout})
+</insert>
+
+
+<!-- 방금 예약한 정보를 결과창에 출력 -->
+<!-- booking_seq.currval가 사용 불가능이라서 sql문에 last_number라는 것을 사용. nextval()을 이용해 현재 트랜잭션의 세션을 생성해주지 않으면 MyBatis에서 currval사용에 에러가 난다.  -->
+<select id="getBookinginfo" resultType="peer.model.booking.BookingBean">
+select * from booking where user_num = #{user_num} order by book_num desc
+</select>
+
+<!-- 숙소 이름만 불러오기 -->
+<select id="getHousename" resultType="peer.model.house.HouseBean">
+select house_name from house where house_num = (select house_num from booking where book_num = 
+(select last_number from user_sequences where sequence_name = 'BOOKING_SEQ'))
+</select>
+
+
+<select id="gethouseList" parameterType="int" resultType="peer.model.house.HouseBean">
+    <![CDATA[
+	select * from (select rownum rnum, house.* from  
+  	(select * from house where user_num=#{user_num} order by HOUSE_NUM desc) house) 
+    where rnum >= ((#{page}-1) * 10+1)  and rnum <= (#{page} * 10)
+	]]>
+</select> 
+</mapper>

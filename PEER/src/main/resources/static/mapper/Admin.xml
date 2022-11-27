@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="peer.dao.admin.AdminMapper">
+	
+	<!-- 유저목록 -->
+	<select id="getUsers" resultType="peer.model.member.MemberBean">
+		select * from user_info order by user_rege desc
+	</select>
+	
+	<!-- 계정정지 -->
+	<update id="suspension">
+		update user_info set user_authority = 3 where user_num = #{user_num}
+	</update>
+	
+	<!-- 계정복구 -->
+	<update id="access">
+		update user_info set user_authority = 1 where user_num = #{user_num}
+	</update>
+
+</mapper>

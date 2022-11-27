@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<th:block th:replace="/common/layout.html :: head('Peer')"></th:block>
+<th:block th:replace="/common/header :: header"></th:block>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<style>
+	.wrap {
+		font-family: 'NanumSquare';
+</style>
+
+<body>
+	<div class="wrap" align="center" style="margin-top: 5%; margin-bottom: 5%;">
+		
+		<!-- 이미지 불러오기 -->
+		<img src="/img/house/cancle.png">
+		
+		<form method="post" action="house_del_ok.Interceptor" name="deleteform">
+			<input type="hidden" name="house_num" th:value="${hcont.house_num}" />
+			<input type="hidden" name="house_num" th:value="${hpcont.house_num}" />
+			<input type="hidden" name="page" th:value="${page}" />
+			
+			<p>
+				<a style="font-size: 15pt; font-weight: bold;">'[[${hcont.house_name}]]'</a> 
+				숙소를 정말 삭제하시겠습니까?<br>
+				<a style="font-size: 9pt; font-weight:bold; color: red;">* 삭제한 후에는 되돌릴 수 없습니다.</a>
+			</p>
+			
+			<div id="housedel_menu">
+				<input type="button" class="btn btn-danger" value="삭제" onclick="removeCheck()">
+				<input type="button" class="btn btn-outline-primary btn-sm" value="돌아가기" onclick="history.go(-1)">
+				
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript">
+		function removeCheck() {
+
+			if (confirm("정말 삭제하시겠습니까?") == true) { //확인
+				alert("삭제되었습니다!");
+				document.deleteform.submit();
+			} else { //취소
+				return false;
+			}
+		}
+	</script>
+</body>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

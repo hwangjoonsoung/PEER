@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/* head('메인 페이지') 수정하면 수정한 타이틀 들어갑니다 */-->
+<th:block th:replace="/common/layout.html :: head('쪽지')"></th:block>
+<body>
+<!--/* 쪽지 작성 */-->
+<div style="margin-left:30px; width:610px">
+<th:block th:if="${message_sender_nick} != null">
+<form action="/msgsend.Intercept" method=post id="msgSend" style="width:600px">
+	<input type="hidden" name="message_receiver_num" th:value="${message_sender_num}"><br>
+	<div class="mb-3">
+ 		<label for="exampleFormControlTextarea1" class="form-label">받는 사람</label>
+    	<div class="col-sm-10">
+      		<input type="text" style="font-weight:normal;" readonly class="form-control-plaintext" id="staticEmail"  name="message_receiver_nick" th:value="${message_sender_nick}">
+    	</div>
+	</div>
+	<div class="mb-3">
+ 		<label for="exampleFormControlTextarea1" class="form-label">보낼 내용</label>
+    	<div class="col-sm-10">
+  			<textarea class="form-control" name=message_content id="exampleFormControlTextarea1" rows="3"
+  			style="width:100%; height:250px; resize:none;" maxlength="200" placeholder = "내용을 작성해주세요"></textarea>
+		</div>
+ 	</div>
+ 	<div style="float:right; margin-right:150px">
+		<button type="submit" class="btn btn-primary btn-sm" id="headerbutton">보내기</button>
+		<button type="button"  class="btn btn-outline-dark btn-sm" id="wishlist" th:onclick="closeWin()">취소</button>
+ 	</div>
+</form>
+</th:block>
+<th:block th:if="${message_sender_nick} == null">
+	<div class="mb-3">
+ 		<label for="exampleFormControlTextarea1" class="form-label">탈퇴한 회원입니다 </label>
+ 	</div>
+		<button type="button"  class="btn btn-outline-dark btn-sm" id="wishlist" th:onclick="closeWin()">닫기</button>
+</th:block>
+</div>
+<script th:inline="javascript">
+	function closeWin(){
+		window.close();
+	}
+</script>
+</body>
+</html>

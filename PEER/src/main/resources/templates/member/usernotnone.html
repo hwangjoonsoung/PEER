@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" />
+<html>
+<head>
+<th:block th:replace="/common/layout.html :: head('메인 페이지')"></th:block>
+<meta charset="UTF-8">
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript"
+	src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js"
+	charset="utf-8"></script>
+<meta charset="UTF-8">
+<style type="text/css">
+div.div-container {
+	display: none;
+	height: 40%;
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$('div').fadeIn(700);
+	});
+</script>
+<title>비밀번호 찾기</title>
+</head>
+<th:block th:replace="/common/header :: header"></th:block>
+<body>
+	<br>
+	<br>
+	<br>
+	<div class="dwrap"
+		style="min-height: 500px; padding-top: 30px; padding-left: 200px;"
+		align="center">
+		<div class="container mt-5">
+			<div class="row">
+				<div class="col-sm-4">
+					<h2></h2>
+					<h5></h5>
+					<div class="fakeimg">
+						<img style="width: 200px;" src="/img/list.png">
+					</div>
+				</div>
+				<div class="col-sm-8">
+					<h2></h2>
+					<h5></h5>
+					<div class="fakeimg">
+						<div class="div-container">
+							<br> <br>
+							<h2>비밀번호 시키신분~~</h2>
+							<span>비밀번호 : </span> <span th:text="${password}"> </span>
+							<p>
+								<a href="/login">peer에 로그인 하러 가기</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

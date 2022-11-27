@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head('메인 페이지') 수정하면 수정한 타이틀 들어갑니다 -->
+<th:block th:replace="/common/layout.html :: head('Peer')"></th:block>
+<th:block th:replace="/common/header :: header"></th:block>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<!-- 사용 하는곳 -->
+
+
+	<div align="center" style="margin-top: 5%;">
+		<div align="center">
+			<span class="community" style="font-size:25pt; color: black; font-weight: bolder;">예약이 완료되었습니다!</span>
+		</div>
+		<img align="middle" src="/img/book/Payresult.png" width="450px" draggable="false">
+	</div>
+	
+<div align="center">
+	<table>
+	 <tr>
+	 	<td>
+	 		<span class="badge bg-success">예약번호</span> 
+	 	</td>
+	 	<td>[[${Info.book_num}]]</td>
+	 </tr>
+	 <tr>
+	 	<td>
+	 		<span class="badge bg-success">&nbsp&nbsp체크인&nbsp&nbsp</span>
+	 	</td>
+	 	<td>[[${#dates.format(Info.checkin, 'MM월 dd일')}]]</td>
+	 </tr>
+	 <tr>
+	 	<td>
+	 		<span class="badge bg-success">체크아웃</span>
+	 	</td>
+	 	<td>
+	 		[[${#dates.format(Info.checkout, 'MM월 dd일')}]]
+	 	</td>
+	 </tr>
+	 <tr>
+	 	<td>
+	 		<span class="badge bg-success">결제금액</span>
+	 	</td>
+	 	<td>
+	 		[[${Info.total_price}]]원
+	 	</td>
+	 </tr>
+	</table>
+</div>
+<br><br>
+
+
+<div align="center" style="margin-bottom: 5%;">
+<button class="btn btn-outline-primary" th:onclick="|location.href='@{/}'|">메인</button>
+<button class="btn btn-outline-primary" th:onclick="|location.href='@{MyBooking.Intercept}'|">예약내역</button>
+</div>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>
+

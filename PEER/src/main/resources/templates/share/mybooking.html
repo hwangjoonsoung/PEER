@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('peer')"/>
+<th:block th:replace="/common/header.html :: header"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<head>
+<style>
+	.wrap {
+		font-family: 'NanumSquare';
+	}
+	
+	.None {
+		font-weight: bolder;
+		margin-top: 150px;
+	}
+	
+</style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+<div class="wrap" style="margin-bottom: 15%;">
+	
+	<div class="banner" align="center">
+		<img align="top" src="/img/share/banner_mybooking.png" height="180px" ondragstart="return false">
+	</div>
+		
+		<div class="container mt-5">
+		  <div class="row">
+		    <div class="col-sm-4">
+		      <h3 class="mt-4" style="font-family: 'NanumSquare';">이동하기</h3>
+		      <p style="font-family: 'NanumSquare';">새로운 여행 메이트를 만나보세요!</p>
+		      <ul class="nav nav-pills flex-column">
+		        <li class="nav-item">
+		          <a class="nav-link active" href="#" style="font-size: 9pt;">상단으로 이동</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link" href="/">메인</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link" href="BoardList.do">커뮤니티</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link disabled" href="#">고객센터</a>
+		        </li>
+		      </ul>
+		      <hr class="d-sm-none">
+		    </div>
+		    <div class="col-sm-8">
+		      <h2 style="font-family: 'NanumSquare';">나의 예약</h2>
+		       <div class="alert alert-danger">
+					  <span style="font-size: 10pt;"><strong>주의사항!</strong> 
+					  쉐어를 결정하기 전까지 
+					  상대방과 충분한 커뮤니케이션 및 만남을 권고합니다.</span>
+				  </div>
+		      <br>
+		      
+		      
+		      <!-- 쉐어 예약내역 -->
+		      <span class="badge bg-success">쉐어 가능한 예약</span>
+		      
+		      <br><br>
+				<th:block th:if="${#lists.isEmpty(MyShareBooking)}">
+				 <div align="center" style="margin-top: 100px; margin-bottom: 100px;">
+						예약내역이 존재하지 않습니다.
+				 </div>
+				</th:block>
+		
+				  <table class="table table-hover" th:if="${not #lists.isEmpty(MyShareBooking)}">
+					<tr align="center">
+						<th>예약번호</th>
+						<th>숙소이름</th>
+						<th>체크인</th>
+						<th>체크아웃</th>
+						<th></th>
+					</tr>
+				 <th:block th:each="myShare : ${MyShareBooking}">
+				 
+					<tr align="center" style="font-size: 10pt;">
+						
+						<td th:text="${myShare.book_num}"></td>
+						<td>
+							<a th:href="@{HouseView(house_num = ${myShare.house_num}, page=1, state=cont)}"
+							   style="text-decoration: none; color: black; vertical-align: middle;">[[${myShare.house_name}]]</a>
+						</td>
+						<td th:text="${#dates.format(myShare.checkin, 'YYYY-MM-dd')}"></td>
+						<td th:text="${#dates.format(myShare.checkout, 'YYYY-MM-dd')}"></td>
+						<td>
+						 <form method="post" action="Share.Intercept">
+							<input type="hidden" th:name="book_num" th:value="${myShare.book_num}">
+							<input type="hidden" th:name="id" th:value="${id}">
+								<input type="submit" class="btn btn-outline-primary btn-sm" style="margin-left: 30px; vertical-align: middle;" th:if="${myShare.share_check} == 1" value="쉐어하기">
+								<input type="submit" class="btn btn-outline-primary btn-sm" style="margin-left: 30px; vertical-align: middle;" th:if="${myShare.share_check} == 2" value="매칭중">
+								<span th:if="${myShare.share_check} == 3" class="badge bg-success">완료 </span>
+						 </form>	
+						</td>
+					</tr>
+					
+				 </th:block>	
+				</table>
+				
+				
+				<!-- 일반예약 내역-->
+				<span class="badge bg-secondary">일반예약</span>
+		     	 <br><br>
+				<th:block th:if="${#lists.isEmpty(MyBooking)}">
+				 <div class="None" align="center">
+						예약내역이 존재하지 않습니다.
+						<br><br>
+				 </div>
+				</th:block>
+		
+				  <table class="table table-hover" th:if="${not #lists.isEmpty(MyBooking)}">
+					<tr align="center">
+						<th>예약번호</th>
+						<th>숙소이름</th>
+						<th>체크인</th>
+						<th>체크아웃</th>
+					</tr>
+				 <th:block th:each="myBooking : ${MyBooking}">
+				 
+					<tr align="center" style="font-size: 10pt;">
+						<td th:text="${myBooking.book_num}"></td>
+						<td>
+							<a th:href="@{HouseView(house_num = ${myBooking.house_num}, page=1, state=cont)}"
+							   style="text-decoration: none; color: black; vertical-align: middle;">[[${myBooking.house_name}]]</a>
+						</td>
+						<td th:text="${#dates.format(myBooking.checkin, 'YYYY-MM-dd')}"></td>
+						<td th:text="${#dates.format(myBooking.checkout, 'YYYY-MM-dd')}"></td>
+					</tr>
+					
+				 </th:block>	
+				</table>
+		    </div>
+		  </div>
+		</div>
+</div>
+</body>
+
+<!-- FOOTER -->
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

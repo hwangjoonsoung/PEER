@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('peer')"/>
+<th:block th:replace="/common/header.html :: header"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<head>
+
+<style>
+
+	.wrap {
+			font-family: 'NanumSquare';
+		}
+	
+	.None {
+		font-family: 'NanumSquare';
+		
+		font-weight: bolder;
+		margin-top: 150px;
+	}
+	
+</style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+
+<div class="wrap" style="margin-bottom: 25%;">
+	
+	<div class="banner" align="center">
+		<img align="top" src="/img/share/banner_quelist.png" height="180px" ondragstart="return false">
+	</div>
+	
+	<div class="container mt-5">
+		  <div class="row">
+			    <div class="col-sm-4">
+			    <h2 style="font-family: 'NanumSquare';">여행을 함께!</h2>
+			    <div><img src="/img/share/mybooking.png" width="350px"></div>
+			    <p style="font-size: 10pt;">
+
+						대기열에 나오는 사람들은<br>
+						아래에 해당하는 사람들입니다.
+						
+						<li>같은 숙소</li>
+						<li>같은 체크인 & 체크아웃 날짜</li>
+						<li>같은 성별</li>
+						<br>
+				</p>
+		    
+		      <h3 class="mt-4" style="font-family: 'NanumSquare';">이동하기</h3>
+		      <p style="font-family: 'NanumSquare';">새로운 여행 메이트를 만나보세요!</p>
+		      <ul class="nav nav-pills flex-column">
+		        <li class="nav-item">
+		          <a class="nav-link active" href="#" style="font-size: 9pt;">상단으로 이동</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link" href="/">메인</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link" href="BoardList.do">커뮤니티</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link disabled" href="#">고객센터</a>
+		        </li>
+		      </ul>
+		      <hr class="d-sm-none">
+		    </div>
+		    <div class="col-sm-8">
+		      <h2 style="font-family: 'NanumSquare';">대기열</h2>
+			      <div class="alert alert-danger">
+					  <span style="font-size: 10pt;"><strong>주의사항!</strong> 
+					  쉐어를 결정하기 전까지 
+					  상대방과 충분한 커뮤니케이션 및 만남을 권고합니다.</span>
+				  </div>
+		      <br>
+		      
+		     	<!-- 대기열이 없을 때 -->
+				<div class="None" align="center">
+					<th:block th:if="${#lists.isEmpty(QueMember)}">
+						대기열이 존재하지 않습니다.
+						<br><br>
+						
+						<input type="button" value="되돌아가기" 
+							class="btn btn-light" th:onclick="|location.href='@{MyBooking.Intercept}'|"/>
+					</th:block>
+				</div>
+		      
+			    <!-- 대기자 명단 / 매칭되지 않은 인원만 띄우기 -->
+				<th:block th:if="${not #lists.isEmpty(QueMember)} and ${#strings.isEmpty(proposer)}">
+				
+				<form method="POST" action="Sign.Intercept">
+					<table class="table" style="margin-top: -15%;">
+					
+						<tr align="center">
+							<td rowspan="2">
+								<img src="/img/share/BasicProfile.png" width="75" height="75">
+							</td>
+							<th>닉네임</th>
+							<th>나이</th>
+							<th>성별</th>
+							<td rowspan="2" align="center" style="vertical-align: middle;">
+								<input class="btn btn-outline-primary" type="submit" value="신청"/>
+							</td>
+						</tr>
+				
+						<th:block th:each="QueMemList, i: ${QueMember}">
+							
+						                                      <!-- 본인 데이터를 View 페이지에서 제외 -->
+							<tr align="center" th:if="${not #strings.equals(id, QueMemList.user_num)}">
+							<input type="hidden" name="user_num_1" th:value="${QueMemList.user_num}"/>
+							<input type="hidden" name="user_num_2" th:value="${id}"/>
+							<input type="hidden" name="book_num" th:value="${QueMemList.book_num}"/>
+							
+								<td th:text="${QueMemList.user_name}"></td>
+								<td th:text="${QueMemList.user_age}"></td>
+								<td th:text="${QueMemList.user_gender}"></td>
+								
+							</tr>
+						</th:block>
+					</table>
+				</form>
+				</th:block>
+				
+		    </div>
+		  </div>
+		</div>
+
+</div>
+
+</body>
+
+<!-- FOOTER -->
+ <th:block th:replace="/common/footer :: footer"></th:block>
+</html>

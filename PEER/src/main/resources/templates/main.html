@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head('메인 페이지') 수정하면 수정한 타이틀 들어갑니다 -->
+<th:block th:replace="/common/layout.html :: head('Peer')"></th:block>
+<th:block th:replace="/common/header :: header"></th:block>
+<!-- 사용 하는곳 -->
+
+<div class="hero">
+	<div class="container">
+		<div class="row align-items-center">
+			<div class="col-lg-7">
+				<div class="intro-wrap">
+					<h1 class="mb-5">
+						<span class="d-block">Let's Enjoy Your</span> Trip In <span
+							class="typed-words"></span>
+					</h1>
+
+					<!-- 검색 창 -->
+					<div class="row">
+						<div class="col-12">
+							<form action="search" class="form" onsubmit="selSub(); persub();"> <!-- onsubmit 설정 -->
+								<div class="row mb-2">
+									<div class="col-sm-12 col-md-6 mb-3 mb-lg-0 col-lg-3">
+										<!-- 지역 선택 -->
+										<!-- name, id / value값 설정 -->
+										<select name="loc" id="loc" class="form-control custom-select">
+											<option value="서울">서울</option>
+											<option value="부산">부산</option>
+											<option value="제주">제주</option>
+											<option value="경기">경기</option>
+											<option value="인천">인천</option>
+											<option value="강원">강원</option>
+											<option value="경북">경북</option>
+											<option value="경남">경남</option>
+											<option value="전북">전북</option>
+											<option value="전남">전남</option>
+											<option value="충북">충북</option>
+											<option value="충남">충남</option>
+										</select>
+									</div>
+
+									<!-- 달력 -->
+									<div class="col-sm-12 col-md-6 mb-3 mb-lg-0 col-lg-5">
+										<input type="text" class="form-control" name="daterange">
+									</div>
+
+									<!-- 인원수 -->
+									<div class="col-sm-12 col-md-6 mb-3 mb-lg-0 col-lg-3">
+										<!-- name, id값 설정 -->
+										<select name="person" id="person" class="form-control custom-select">
+											<script>
+												for (var n = 2; n <= 10; n++) {
+													document.write("<option value='");
+													document.write(n);
+													document.write("'>");
+													document.write(n + "명");
+													document.write("</option>");
+												}
+											</script>									
+										</select>
+									</div>
+								</div>
+
+								<!-- 검색 버튼 -->
+								<div class="row align-items-center">
+									<div class="col-sm-12 col-md-6 mb-3 mb-lg-0 col-lg-4">
+										<input type="submit" class="btn btn-primary btn-block"
+											value="검색">
+									</div>
+
+									<!-- 예약 선택 -->
+									<div class="col-lg-8">
+										<label class="control control--checkbox mt-3"> <span
+											class="caption">일반</span> <input type="checkbox"
+											checked="checked" />
+											<div class="control__indicator"></div>
+										</label> <label class="control control--checkbox mt-3"> <span
+											class="caption">쉐어</span> <input type="checkbox"
+											checked="checked" />
+											<div class="control__indicator"></div>
+										</label>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 이미지 슬라이드쇼 -->
+			<div class="col-lg-5">
+				<div class="slides">
+					<img src="img/hero-slider-1.jpg" alt="Image"
+						class="img-fluid active"> <img src="img/hero-slider-2.jpg"
+						alt="Image" class="img-fluid"> <img
+						src="img/hero-slider-3.jpg" alt="Image" class="img-fluid"> <img
+						src="img/hero-slider-4.jpg" alt="Image" class="img-fluid"> <img
+						src="img/hero-slider-5.jpg" alt="Image" class="img-fluid">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+		$(function() {
+			var slides = $('.slides'),
+			images = slides.find('img');
+
+			images.each(function(i) {
+				$(this).attr('data-id', i + 1);
+			})
+
+			var typed = new Typed('.typed-words', {
+				strings: ["Seoul."," Busan."," Jeju.", " Gyeonggi.", " incheon."],
+				typeSpeed: 80,
+				backSpeed: 80,
+				backDelay: 4000,
+				startDelay: 1000,
+				loop: true,
+				showCursor: true,
+				preStringTyped: (arrayPos, self) => {
+					arrayPos++;
+					console.log(arrayPos);
+					$('.slides img').removeClass('active');
+					$('.slides img[data-id="'+arrayPos+'"]').addClass('active');
+				}
+
+			});
+		})
+		
+		// onsubmit
+		function formSub() {
+			var f = document.getElementById("loc");
+			var len = el.options.length;
+			var str = document.getElementById("loc").value;
+			
+			for(var i=0; i<len; i++){
+				if(f.options[i].value == str){
+					f.options[i].selected == true;
+				}
+			}			
+		}
+		function perSub() {
+			var p = document.getElementById("person");
+			var pLen = el.options.length;
+			var pStr = document.getElementById("person").value;
+			
+			for(var i=0; i<pLen; i++){
+				if(p.options[i].value == pStr){
+					p.options[i].selected == true;
+				}
+			}
+		}
+		 /*]]>*/
+	</script>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

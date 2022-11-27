@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('peer')"/>
+<th:block th:replace="/common/header.html :: header"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<head>
+<meta charset="UTF-8">
+
+<style>
+
+	.comment {
+			margin-top: 100px;
+			margin-bottom: 200px;
+			
+			font-family: 'NanumSquare';
+			font-weight: bolder;
+			font-size: 12pt;
+	}
+
+</style>
+
+<title>peer</title>
+</head>
+<body>
+<div style="position: relative; min-height: 768px;">
+
+	<div class="comment" align="center">
+		<img src="/img/share/result.png">
+		<br><br>
+		
+		이제 같이 여행을 떠날 준비가 되었습니다.<br>
+		즐거운 여행되세요!
+		<br><br>
+	
+		<input type="button" value="예약내역" class="btn btn-light" 
+			th:onclick="|location.href='@{MyBooking.Intercept}'|">
+		<input type="button" value="메인" class="btn btn-outline-primary" 
+			th:onclick="|location.href='@{/}'|">
+	</div>
+
+</div>
+</body>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

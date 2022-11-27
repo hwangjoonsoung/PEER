@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="peer.dao.booking.MyBookingMapper">
+
+	<!-- 예약내역 -->
+	<select id="getMyShareBooking" resultType="peer.model.booking.MyShareBean">
+		select * from sbook_view where user_num_1 = #{id} order by checkin desc
+	</select>
+
+	<select id="getMyBooking" resultType="peer.model.booking.MyBookingBean">
+		select * from book_view where user_num = #{id} order by checkin desc
+	</select>
+	
+</mapper>

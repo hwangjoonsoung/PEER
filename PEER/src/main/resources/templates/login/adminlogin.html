@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('메인 페이지')"></th:block>
+<link rel="shortcut icon" href="#">
+<head>
+<meta charset="UTF-8">
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<th:block th:replace="/common/header :: header"></th:block>
+<body>
+	<div class="bodywrap">
+		<div class="position-relative">
+			<div style="margin-top: 12%"
+				class="position-absolute top-100 start-50 translate-middle">
+				<form id="login" class="login" action="/admincheck" method="post">
+					<table border="0" class="tab">
+						<tr>
+							<td class="sizing1">관리자 아이디</td>
+							<td class="sizing2"><input type="text" class="form-control"
+								name="adminemail" id="adminemail"></td>
+						</tr>
+						<tr>
+							<td class="sizing1">관리자 비밀번호</td>
+							<td class="sizing2"><input type="password"
+								name="adminpassword" class="form-control" id="adminpassword"></td>
+						</tr>
+						<tr>
+							<td colspan="2"><input class="btn btn-outline-primary"
+								type="submit" value="로그인" id="submit">
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+<footer class="fixed-bottom">
+	<th:block th:replace="/common/footer :: footer"></th:block>
+</footer>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<th:block th:replace="/common/layout.html :: head('메인 페이지')"></th:block>
+<head>
+<meta charset="UTF-8" />
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<style type="text/css">
+div.div-container {
+	display: none;
+	height: 40%;
+	padding-left: 40%;
+	padding-top: 8%;
+	padding-bottom: 8%;
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$("div").fadeIn(700);
+	});
+</script>
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		//정규식 검사 (휴대폰번호)
+		$("#user_phone").keyup(function() {
+			var phonePattern = /^\d{2,3}-\d{3,4}-\d{4}$/;
+			if (!phonePattern.test($("#user_phone").val())) {
+				$("#message").text("'-'을 추가해서 입력해 주세요");
+			} else {
+				$("#message").text("");
+			}
+		})
+
+		$("#idform").submit(function() {
+			if ($("#user_name").val() == "") {
+				$("#message").text("이름을 입력해주세요");
+				return false;
+			}
+			if ($("#user_phone").val() == "") {
+				$("#message").text("전화번호를  입력해주세요");
+				return false;
+			}
+		})
+	})
+</script>
+
+</script>
+<title>id찾기</title>
+</head>
+<th:block th:replace="/common/header :: header"></th:block>
+<body>
+	<div class="dwrap">
+		<!--  -->
+		<div class="container mt-5" align="center"
+			style="padding-top: 150px; padding-left:7%; min-height: 450px;">
+			<div class="row">
+				<div class="col-sm-4">
+					<h2></h2>
+					<h5></h5>
+					<div class="fakeimg"><img src="img/findid.png"></div>
+				</div>
+				<div class="col-sm-8">
+					<h2></h2>
+					<h5></h5>
+					<div class="fakeimg">
+						<form th:action="@{/searchid}" th:object="${member}" method="post"
+							id="idform">
+							<span>이름과 전화번호를 입력하세요</span>
+							<table border="0">
+								<tr>
+									<td>이름</td>
+									<td><input type="text" name="user_name"
+										class="form-control" id="user_name" />
+										<div id="idcheck" style="color: red"></div></td>
+								</tr>
+								<tr>
+									<td>전화번호</td>
+									<td><input type="text" name="user_phone" id="user_phone"
+										class="form-control" placeholder="'-'을 제외하고 입력해 주세요" />
+										<div id="phonecheck" style="color: red"></div></td>
+								</tr>
+								<tr>
+									<td id="message" colspan="2" style="color: red"></td>
+								</tr>
+								<tr>
+									<td><input class="btn btn-outline-primary" type="submit"
+										value="찾기" /></td>
+								</tr>
+							</table>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--  -->
+
+
+	</div>
+</body>
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>
+</html>

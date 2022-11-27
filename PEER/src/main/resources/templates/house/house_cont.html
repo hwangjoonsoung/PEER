@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="/common/layout.html :: head('Peer')"></th:block>
+<th:block th:replace="/common/header :: header"></th:block>
+<link rel="stylesheet" href="css/daterangepicker.css">
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<style>
+	.wrap {
+		font-family: 'NanumSquare';
+	}
+	
+	th {
+		width: 150px;
+		font-size: 12pt;
+		color:#3232ff;
+	}
+	
+	td {
+		font-size: 11pt;
+	}
+	
+* {
+  box-sizing: border-box;
+}
+
+img {
+  vertical-align: middle;
+}
+
+/* Position the image container (needed to position the left and right arrows) */
+.container {
+}
+
+/* Hide the images by default */
+.mySlides {
+}
+
+/* Add a pointer when hovering over the thumbnail images */
+.cursor {
+  cursor: pointer;
+}
+
+/* Next & previous buttons */
+.prev,
+.next {
+  cursor: pointer;
+  top: 40%;
+  width: auto;
+  padding: 16px;
+  margin-top: -50px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover,
+.next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Container for image text */
+.caption-container {
+  text-align: center;
+  background-color: #222;
+  padding: 2px 16px;
+  color: white;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Six columns side by side */
+.column {
+  float: left;
+  width: 16.6%;
+}
+
+/* Add a transparency effect for thumnbail images */
+.demo {
+  opacity: 0.6;
+}
+
+.active,
+.demo:hover {
+  opacity: 1;
+}
+	
+</style>
+
+<body>
+<div class="wrap" style="margin-bottom: 10%;">
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm-4">
+      <h2 style="font-family: 'NanumSquare';">자신의 숙소를 등록해보세요!</h2>
+      <div>
+      	<img src="/img/house/host.png" width="350px" style="margin-top: 25px;">
+      </div>
+      <h3 class="mt-4" style="font-family: 'NanumSquare';">이동하기</h3>
+      <p style="font-family: 'NanumSquare';">즐거운 여행으로 가는 지름길!</p>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a class="nav-link active" href="#" style="font-size: 9pt;">상단으로 이동</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/">메인</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="BoardList.do">커뮤니티</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">고객센터</a>
+        </li>
+      </ul>
+      <hr class="d-sm-none">
+    </div>
+    <div class="col-sm-8">
+      <h2 style="font-family: 'NanumSquare';">숙소 상세페이지</h2>
+      <h5 style="font-family: 'NanumSquare';">등록한 숙소를 관리해보세요!</h5>
+      
+		<table id="hcont_t" class="table" style="vertical-align: middle;">
+			<tr>
+				<th>숙소 번호</th>
+				<td>
+					<span class="badge bg-dark">[[${hcont.house_num}]]</span>
+				</td>
+			</tr>
+			<tr>
+				<th>숙소 이름</th>
+				<td th:text="${hcont.house_name}"></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center"><div id="map" style="width:500px; height:300px;"></div></td>
+
+			</tr>
+			<tr>
+				<th>주소</th>
+				<td th:text="${hcont.house_address}"></td> <Br>
+			</tr>
+			<tr>
+				<th>사진</th>
+				<td>
+<div class="container">
+  <div class="mySlides" th:each="p : ${photo}" align="center">
+    <img th:src="${p}" width="400" height="300">
+  </div>
+    
+  <a class="prev" onclick="plusSlides(-1)">❮</a>
+  <a class="next" onclick="plusSlides(1)">❯</a>
+
+   <div class="caption-container">
+    <p id="caption"></p>
+  </div>
+  
+  <div class="row">
+    <div class="column" th:each="p : ${photo}">
+      <img class="demo cursor" th:src="${p}" style="width:100%" onclick="currentSlide(i)">
+    </div>
+  </div>
+</div>
+			<script type="text/javascript">
+			var slideIndex = 1;
+			showSlides(slideIndex);
+			
+			// Auto Move Slide
+			var sec = 3000;
+			setInterval(function(){
+			  slideIndex++;
+			  showSlides(slideIndex);
+
+			}, sec);
+			
+			function plusSlides(n) {
+			  showSlides(slideIndex += n);
+			}
+
+			function currentSlide(n) {
+			  showSlides(slideIndex = n);
+			}
+
+			function showSlides(n) {
+			  var i;
+			  var slides = document.getElementsByClassName("mySlides");
+			  var dots = document.getElementsByClassName("demo");
+			  var captionText = document.getElementById("caption");
+			  if (n > slides.length) {slideIndex = 1}
+			  if (n < 1) {slideIndex = slides.length}
+			  for (i = 0; i < slides.length; i++) {
+			      slides[i].style.display = "none";
+			  }
+			  for (i = 0; i < dots.length; i++) {
+			      dots[i].className = dots[i].className.replace(" active", "");
+			  }
+			  slides[slideIndex-1].style.display = "block";
+			  dots[slideIndex-1].className += " active";
+			  captionText.innerHTML = dots[slideIndex-1].alt;
+			}
+			</script>					
+				</td>
+			</tr>
+			<tr>
+				<th>숙소 유형</th>
+				<td>
+					<span class="badge bg-info">[[${hcont.house_form}]]</span>
+				</td>	
+			</tr>
+			<tr>
+				<th>쉐어 가능여부</th>
+				<td>
+ 				<div th:if="${hcont.house_share.toString().equals('1')}">
+ 					<span class="badge bg-danger">일반숙소 - 쉐어 불가능</span>
+ 				</div>
+				<div th:if="${hcont.house_share.toString().equals('2')}">
+					<span class="badge bg-success">쉐어숙소 - 쉐어 가능</span>
+				</div>
+				</td>	
+			</tr>
+			<tr>
+				<th>사용 가능 인원</th>
+				<td th:text="${hcont.house_capacity}+명"></td>
+			</tr>
+						<tr>
+				<th>성수기 기간</th>
+				<td th:text="${hpcont.daterange}"></td>
+			</tr>
+			<tr>
+				<th>숙소 가격</th>
+				<td> 
+				<span class="badge bg-primary">비성수기(주중)</span> <span th:text="${#numbers.formatInteger(hpcont.hprice_bweek, 3,'COMMA')}+원"></span><br>
+				<span class="badge bg-primary">비성수기(주말)</span> <span th:text="${#numbers.formatInteger(hpcont.hprice_bweekend, 3,'COMMA')}+원"></span><br>
+				<span class="badge bg-success">성수기(주중)</span> <span th:text="${#numbers.formatInteger(hpcont.hprice_sweek, 3,'COMMA')}+원"></span><br>
+				<span class="badge bg-success">성수기(주말)</span> <span th:text="${#numbers.formatInteger(hpcont.hprice_sweekend, 3,'COMMA')}+원"></span><br>
+				</td>
+			</tr>
+			<tr>
+				<th>시설 정보</th>
+					<td style="display: flex; flex-wrap: wrap;">
+						<div th:each="de : ${detail}">
+							<span class="badge bg-info">[[${de}]]</span>&nbsp
+						</div>
+					</td>
+			</tr>					
+			<tr>
+				<th>추가 정보</th>
+				<td>
+					<pre><div th:text="${hcont.house_detail2}"></div></pre>
+				</td>
+			</tr>
+		</table>
+
+		<div id="hcont_menu" align="right">
+			<input type="button" class="btn btn-danger btn-sm" th:onclick="|location.href='@{/house_cont.Interceptor(house_num=${hcont.house_num},page=${page},state='del')}'|" value="삭제">		
+			<input type="button" class="btn btn-outline-primary btn-sm" value="목록" th:onclick="|location.href='@{/host_house_list.Interceptor(page=${page})}'|">
+		</div><br>
+	
+		<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5efe9f5d0b275d90cddaffeb298d18d1&libraries=services"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = {
+        center: new kakao.maps.LatLng(/*[[${hcont.house_y}]]*/, /*[[${hcont.house_x}]]*/), // 지도의 중심좌표
+        level: 4 // 지도의 확대 레벨
+    };  
+// 지도를 생성합니다    
+var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+        var coords = new kakao.maps.LatLng(/*[[${hcont.house_y}]]*/, /*[[${hcont.house_x}]]*/);
+
+        // 결과값으로 받은 위치를 마커로 표시합니다
+        var marker = new kakao.maps.Marker({
+            map: map, position: coords
+        });
+        // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+        map.setCenter(coords);
+
+        var iwContent = '<div style="width: 288px; height:115px;">'
+        	   + '<div class="info">'
+        	   + '<div class="title">'+/*[[${hcont.house_name}]]*/+'</div>'
+        	   + '<div class="body">'
+        	   + '<div class="img">'
+        	   + '<img src="img/hero-slider-5.jpg" width="73" height="70">'
+        	   + '</div>'
+        	   + '<div class="desc">'
+        	   + '<div class="ellipsis">'+/*[[${hcont.house_address}]]*/+'</div>'
+        	   + '<div><a href="https://www.choongang.co.kr/" target="_blank" class="link">홈페이지</a></div>'
+        	   + '</div>' + '</div>' + '</div>' + '</div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+        	iwRemoveable = true; // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+        	//인포윈도우를 생성합니다
+        	var infowindow = new kakao.maps.InfoWindow({
+        	    content : iwContent,
+        	    removable : iwRemoveable
+        	});
+
+        	// 마커에 클릭이벤트를 등록합니다
+        	kakao.maps.event.addListener(marker, 'click', function() {
+        	      // 마커 위에 인포윈도우를 표시합니다
+        	      infowindow.open(map, marker);  
+        	});
+        
+ /*]]>*/ 
+</script>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+		
+
+</body>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

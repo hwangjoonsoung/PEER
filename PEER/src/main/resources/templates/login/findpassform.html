@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" />
+<th:block th:replace="/common/layout.html :: head('메인 페이지')"></th:block>
+<meta charset="UTF-8">
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript"
+	src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js"
+	charset="utf-8"></script>
+<html>
+<head>
+<style>
+.form-control {
+	width: 100%;
+}
+
+.sizebutton {
+	width: 65px;
+}
+
+table {
+	width: 380px;
+}
+
+div.div-container {
+	display: none;
+	height: 40%;
+	padding-left: 40%;
+	padding-top: 8%;
+	padding-bottom: 8%;
+}
+
+.sizelow {
+	width: 50%;
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$('div').fadeIn(700);
+	});
+</script>
+<title>이메일 인증</title>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var EAuthCode = /*[[${EAuthCode}]]*/;
+	var user_email = /*[[${user_email}]]*/
+	$(document).ready(function() {
+		if (EAuthCode != null) {
+			$("#user_email").val(user_email);
+			$("#AuthCode").val(EAuthCode);
+			$("#AuthCode").attr("disabled", false);
+		}
+	})
+</script>
+<script>
+	$(document).ready(function() {
+		var emailparrten = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+		//정상입력이 안된경우
+		$("#user_email").keyup(function(){
+			if(!emailparrten.test($("#user_email").val())){
+				$("#emailcheck").text("이메일을 다시 입력해주세요");
+				$("#sendingemail").attr("disabled",true);
+			}else{
+				$("#emailcheck").text("");
+				$("#sendingemail").attr("disabled",false);
+			}
+		})
+		
+		$("#sendingemail").click(function() {
+			if ($("#user_email").val() == "") {
+				$("#message").text("이메일을 입력해주세요");
+				return false;
+			}
+			if ($("#user_email").val() != "") {
+				var user_email = $("#user_email").val();
+				var url = "/searchemailnomal?user_email=" + user_email;
+				location.href = url;
+			}
+		})
+		$("#Authbutton").click(function() {
+			if ($("#AuthCode").val() == "") {
+				$("#message").text("인증번호를 입력해주세요");
+				$("#AuthCode").focus();
+			}
+			if ($("#AuthCode").val() != "") {
+				if($("#AuthCode").val()==EAuthCode){
+					var user_email = $("#user_email").val();
+					var showpassword = '/searchemail?user_email='+user_email;
+				location.href =showpassword ;
+				}
+				if($("#AuthCode").val()!=EAuthCode){
+					$("#message").text("인증번호가 일치하지 않습니다");
+					$("#AuthCode").focus();
+					$("#AuthCode").val("");
+				}
+			}
+		})
+	})
+	/*]]>*/
+</script>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+Kakao.init('8a3e3c0c80591a142efa68874e135cb3'); //발급받은 키 중 javascript키를 사용해준다.
+	function kakaoLogin() {
+		Kakao.Auth.loginForm({
+			success : function(response) {
+				Kakao.API.request({
+					url : '/v2/user/me',
+					success : function(response) {
+						var sethref = "/searchemail?user_email="
+								+ response.kakao_account.email;
+						location.href = sethref;
+					},
+					fail : function(error) {
+						console.log(error)
+					},
+				})
+			},
+			fail : function(error) {
+				console.log(error)
+			},
+		})
+	}
+</script>
+</head>
+<th:block th:replace="/common/header :: header"></th:block>
+<body>
+	<div class="dwrap" style="min-height: 500px; padding-top: 30px; padding-left: 200px;" align="center">
+	<br><br>
+		<div class="container mt-5">
+			<div class="row">
+				<div class="col-sm-4">
+					<h2></h2>
+					<h5></h5>
+					<div class="fakeimg"><img style="width: 200px;" src="img/findpassword.png"></div>
+				</div>
+				<div class="col-sm-8">
+					<h2></h2>
+					<h5></h5><br>
+					<div class="fakeimg">
+						<table id="tab" border="0">
+							<tr>
+								<td width="80" class="sizelow">이메일</td>
+								<td colspan="2"><input class="form-control" type="text"
+									name="user_email" id="user_email" required="required"></td>
+								<td class="sizebutton"><input
+									class="btn btn-outline-primary" type="button"
+									name="sendingemail" id="sendingemail" value="인증"
+									disabled="true"></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td colspan="3"><div id="emailcheck" style="color: red;"></div></td>
+							</tr>
+							<tr id="membernotex">
+								<td width="80" class="sizelow">인증번호</td>
+								<td colspan="2"><input type="text" name="AuthCode"
+									id="AuthCode" class="form-control" disabled="true" required
+									value=""></td>
+								<td class="sizebutton"><input
+									class="btn btn-outline-primary" type="button" name="Authbutton"
+									id="Authbutton" value="확인"></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td id="message" colspan="3" style="color: red"></td>
+							</tr>
+							<tr>
+								<td colspan="2"><a onclick="kakaoLogin()"><img
+										src="/img/kakao_Auth_button.png"></a></td>
+								<td colspan="2" id="naver_id_login"></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--  -->
+	</div>
+</body>
+<!-- 네이버 로그인 -->
+<script type="text/javascript">
+	var naver_id_login = new naver_id_login("o4ZYTkFOJwW0NUVNtIhq",
+			"http://localhost/callback3");
+	var state = naver_id_login.getUniqState();
+	naver_id_login.setButton("white", 3, 40);
+	naver_id_login.setDomain("YOUR_SERVICE_URL");
+	naver_id_login.setState(state);
+	naver_id_login.setPopup();
+	naver_id_login.init_naver_id_login();
+</script>
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>
+

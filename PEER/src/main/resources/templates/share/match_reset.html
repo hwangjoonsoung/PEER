@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('peer')"/>
+<th:block th:replace="/common/header.html :: header"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<head>
+<meta charset="UTF-8">
+
+<style>
+
+	.comment {
+		margin-top: 150px;
+		margin-bottom: 150px;
+		
+		font-family: 'NanumSquare';
+		font-weight: bolder;
+		font-size: 15pt;
+	}
+
+</style>
+
+<title>peer</title>
+</head>
+<body>
+
+<div style="position: relative; min-height: 768px;">
+
+<div class="comment" align="center">
+	<img src="/img/share/reset.png" width="400px">
+	<br>
+	
+	상대방이 쉐어를 취소했습니다.<br>
+	<a style="font-size: 10pt;">잠시 후 예약내역 페이지로 이동합니다.</a>
+</div>
+
+<script>
+	setTimeout("location.href='MyBooking.Intercept'", 3000)
+</script>
+
+</div>
+
+</body>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

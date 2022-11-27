@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="peer.dao.booking.ShareMapper">
+
+	<!-- 예약정보 불러오기 -->
+	<select id="getShareInfo" resultType="peer.model.booking.ShareBean">
+		select * from share_booking where book_num = #{book_num} and user_num_1 = #{id}
+	</select>
+	
+	<!-- 회원정보 가져오기 -->
+	<select id="getMemberInfo" resultType="peer.model.member.MemberBean">
+		select * from user_info where user_num = #{proposer}
+	</select>
+	
+	<!-- 회원 성별 가져오기(임시) -->
+	<select id="getGender" resultType="String">
+		select user_gender from user_info where user_num = #{id}
+	</select>
+
+	<!-- 대기열 인원정보 출력 -->
+	<select id="getQueList" parameterType="peer.model.booking.ShareBean"
+						    resultType="peer.model.booking.TotalBean">
+			select * from share_view 
+			<![CDATA[
+			where book_num != #{info.book_num} 
+			and to_char(checkin, 'YYYYMMDD') = to_char(#{info.checkin}, 'YYYYMMDD') 
+			and to_char(checkout, 'YYYYMMDD') = to_char(#{info.checkout}, 'YYYYMMDD') 
+			and house_num = #{info.house_num} 
+			and user_num_2 is null 
+			and share_check = 1 
+			and user_gender = #{gender} 
+			]]>
+	</select>
+	
+	<!-- 쉐어신청 회원번호 업데이트 -->
+	<update id="sign">
+		update share_booking set user_num_2 = #{user_num_2} where book_num = #{book_num}
+	</update>
+	
+	<!-- 쉐어 신청자 이력조회 -->
+	<select id="proposer" resultType="String">
+		select user_num_2 from share_booking where book_num = #{book_num}
+	</select>
+	
+	<!-- 쉐어신청 이력조회 -->
+	<select id="propose" resultType="peer.model.booking.TotalBean">
+		<![CDATA[
+		select * from share_view  
+		where house_num = (select house_num from share_booking where book_num = #{book_num})  
+		and to_char(checkin, 'YYYYMMDD') = to_char((select checkin from share_booking where book_num = #{book_num}), 'YYYYMMDD')  
+		and to_char(checkout, 'YYYYMMDD') = to_char((select checkout from share_booking where book_num = #{book_num}), 'YYYYMMDD') 
+		and user_num_2 = #{id}
+		]]>
+	</select>
+
+	<!-- 쉐어 요청승인 & 요청한 회원 예약 데이터 변경  & 핸드폰 번호 출력 -->
+	<update id="approve">
+		update share_booking set share_check = 2 where book_num = #{book_num}
+	</update>
+	
+	<update id="requestApprove">
+		<![CDATA[
+		update share_booking 
+		set user_num_2 = (select user_num_1 from share_booking where book_num = #{book_num}), share_check = 2 
+		where book_num = (select book_num from share_booking where user_num_1 = #{proposer} 
+		and house_num = (select house_num from share_booking where book_num = #{book_num}) 
+		and to_char(checkin, 'YYYYMMDD') = to_char((select checkin from share_booking where book_num = #{book_num}), 'YYYYMMDD') 
+		and to_char(checkout, 'YYYYMMDD') = to_char((select checkout from share_booking where book_num = #{book_num}), 'YYYYMMDD'))
+		]]>
+	</update>
+	
+	<select id="getPhoneNumber" resultType="peer.model.member.MemberBean">
+		select * from user_info 
+		where user_num = (select user_num_2 from share_booking where book_num = #{book_num})
+	</select>
+	
+	<!-- 쉐어 요청거절 -->
+	<update id="refuse">
+		update share_booking set user_num_2 = '' where book_num = #{book_num}
+	</update>
+	
+	<!-- 쉐어 매칭확인 -->
+	<select id="matching" resultType="int">
+		select share_check from share_booking where book_num = ${book_num}
+	</select>
+	
+	<!-- 최종결정 / 수락 & 취소 -->
+	<update id="success">
+		update share_booking set share_check = 3 where book_num = #{book_num}
+	</update>
+	
+	<update id="cancle">
+		update share_booking set share_check = 1, user_num_2 = '' where book_num = #{book_num}
+	</update>
+	
+	<!-- 최종결정 상대방 취소확인 -->
+	<select id="confirmCancle" resultType="Integer">
+		<![CDATA[
+		select user_num_2 from share_booking where 
+		house_num = (select house_num from share_booking where book_num = #{book_num}) 
+		and to_char(checkin, 'YYYYMMDD') = to_char((select checkin from share_booking where book_num = #{book_num}), 'YYYYMMDD') 
+		and to_char(checkout, 'YYYYMMDD') = to_char((select checkout from share_booking where book_num = #{book_num}), 'YYYYMMDD') 
+		and user_num_1 = (select user_num_2 from share_booking where book_num = #{book_num})
+		]]>
+	</select>
+	
+</mapper>

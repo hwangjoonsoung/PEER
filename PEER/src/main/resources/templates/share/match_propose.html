@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('요청')"/>
+<th:block th:replace="/common/header.html :: header"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<head>
+<meta charset="UTF-8">
+
+<style>
+	
+	.comment {
+		margin-top: 100px;
+		margin-bottom: 200px;
+		
+		font-family: 'NanumSquare';
+		font-weight: bolder;
+		font-size: 12pt;
+	}
+	
+</style>
+
+</head>
+<body>
+
+<div style="position: relative; min-height: 768px;">
+
+	<!-- 쉐어 신청자가 있는 사람에게 띄우기 -->
+	<div class="comment" align="center">
+		<th:block th:if="${not #strings.isEmpty(proposer)}">
+			<!-- 신청자 회원정보 -->
+			<img src="/img/share/propose.png">			
+			
+			<div>
+			[[${proposerInfo.user_name}]]([[${proposerInfo.user_age}]]살) 님에게 쉐어 요청이 왔습니다!<br>
+			수락하시겠습니까?
+			</div><br>
+			
+				<form>
+					<input type="button" class="btn btn-success" value="수락" 
+					th:onclick="|location.href=
+						'@{SignResult.Intercept(type=Y, book_num=${book_num}, proposer=${proposerInfo.user_num})}'|"/>
+					<input type="button" class="btn btn-danger" value="거절" 
+					th:onclick="|location.href=
+						'@{SignResult.Intercept(type=N, book_num=${book_num}, proposer=${proposerInfo.user_num})}'|"/>
+				</form>
+		<th:block>
+	</div>
+
+</div>
+
+</body>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

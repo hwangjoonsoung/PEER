@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous" />
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Peer Admin</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<style>
+.fakeimg {
+	width: 350px;
+	height: 200px;
+}
+</style>
+<script type="text/javascript">
+	function changeName() {
+		var testlog = $("#selectname").val();
+		var url = "/getlog?user_num=" + testlog;
+		location.href = url;
+	}
+</script>
+</head>
+<body style="min-height: 800px;">
+	<div class="p-5 bg-primary text-white text-center">
+		<h1>peer</h1>
+		<p style="font-size: 10pt;">필요하신 사항은 관리자에게 문의하세요.</p>
+	</div>
+
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+		<div class="container-fluid">
+			<ul class="navbar-nav">
+				<li class="nav-item"><a class="nav-link active"
+					href="/call.AdminPage">회원정보변경</a></li>
+				<li class="nav-item"><a class="nav-link active" href="/logview">로그</a>
+				</li>
+				<li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+				<li class="nav-item"><a class="nav-link disabled" href="#">관리자문의</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container mt-5">
+		<div class="row" style="min-height: 500px;">
+			<div class="col-sm-6" style="max-height: 600px; overflow: auto;">
+				<div>
+					사용자 : <select name="selectname" id="selectname"
+						onchange="changeName()">
+						<option th:text="선택하세요"></option>
+						<option th:each="user : ${userList}" th:value="${user.user_num}">[[${user.user_name}]]
+							([[${user.user_num}]])</option>
+					</select>
+				</div>
+				<div>
+					<table class="table table-striped" style="font-size: small;">
+						<tr align="center">
+							<th align="center">번호</th>
+							<th align="center">로그 고유 번호</th>
+							<th align="center">이름</th>
+							<th align="center">요청</th>
+							<th align="center">시간</th>
+						</tr>
+						<tr th:each="userloglist ,i : ${userloglist}"
+							th:with="logcount = ${1}">
+							<td th:text="${logcount}"
+								th:with="logcount = ${logcount+i.index}" align="center"></td>
+							<td th:text="${userloglist.user_lognum}" align="center"></td>
+							<td th:text="${userloglist.user_name}" align="center"></td>
+							<td th:text="${userloglist.user_do}" align="center"></td>
+							<td th:text="${userloglist.user_date}" align="center"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="col">
+					<div class="row my-3">
+						<div class="col-12">
+							<h4>요청 chart</h4>
+						</div>
+					</div>
+					<div class="row my-2" style="min-width: 1400px;">
+						<div class="col-lg-6">
+							<div class="card">
+								<div class="card-body">
+									<canvas id="myChart1"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+<!-- 부트스트랩 -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
+<!-- 차트 -->
+<script th:inline="javascript">
+//<![CDATA[
+	data = {
+		datasets : [ {
+			backgroundColor : [ '#6666CC', '#669966', '#6633FF', '#FFCCCC', '#FFCC99',
+					'#CCFF99', '#0099FF', '#33FFCC', '#99FFCC', '#E1F6FA', '#C8D7FF',
+					'#50B4FF', '#C8FAC8', '#yellow', '#ACFFEF', '#6FFFC4', '#5CEEE6',
+					'#74D19D', '#FFE1E6', '#FFCFDA', '#FFBEF5', '#FFFA78', '#FF5050',
+					'#828282', '#D7AC87', '#F4FFFF', '#CDECFA', '#FFEBF0' ],
+			data : /*[(${labels})]*/
+		} ],
+		labels : /*[(${data})]*/
+	};
+	var ctx1 = document.getElementById("myChart1");
+	var myPieChart = new Chart(ctx1, {
+		type : 'pie',
+		data : data,
+		options : {}
+	});  //]]>
+</script>
+</html>
+<div class="mt-5 p-4 bg-dark text-white text-center">
+	<p style="font-size: 10pt;">기타 문의사항은 관리자에게 해주세요.</p>
+</div>

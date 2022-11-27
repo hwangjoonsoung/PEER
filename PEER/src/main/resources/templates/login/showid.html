@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('메인 페이지')"></th:block>
+<head>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<meta charset="UTF-8">
+<style type="text/css">
+div.div-container {
+	display: none;
+	height: 40%;
+	padding-left: 40%;
+	padding-top: 8%;
+	padding-bottom: 10%;
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$('div').fadeIn(700);
+	});
+</script>
+</head>
+<th:block th:replace="/common/header :: header"></th:block>
+<body>
+	<div class="dwrap">
+		<div class="div-container">
+			<h2>회원님의 가입된 Email입니다.</h2>
+			<table border="0">
+				<tr th:each="user_email : ${user_emails}">
+					<td th:text="${user_email}"></td>
+				</tr>
+				<tr>
+					<td><a href="/login">peer에 로그인 하러 가기</a></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!--/* header 부분 */-->
+<div th:fragment="header" class="#">
+	<body>
+		<header class="p-3 text-bg-light">
+			<div class="container">
+				<div
+					class="d-flex flex-wrap align-items-left justify-content-center justify-content-lg-start">
+					<a href="/"
+						class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+						<svg class="bi me-2" width="40" height="32" role="img"
+							aria-label="Bootstrap">
+							<img src="img/peer_logo.png" width="80px"></svg>
+					</a>
+
+					<ul style="margin-left: 30px;"
+						class="nav col-12 col-lg-auto me-lg-auto mb-1 justify-content-center mb-md-0">
+						<li><a th:href="BoardList.do" class="nav-link px-2 text-secondary"><span><b>커뮤니티</b></span></a></li>
+					</ul>
+
+					<div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"></div>
+
+					<!--/* 비로그인시 */-->
+					<div class="text-end" th:if="${session.MemberBean == null}">
+						<button type="button" class="btn btn-primary" id="headerbutton"
+							onclick="location.href='login'">
+							<b>로그인</b>
+						</button>
+					</div>
+					<!--/* 로그인시 */-->
+					<!--/* 일반회원 */-->
+					<div th:if="${session.MemberBean != null}">
+
+						<button class="btn btn-outline-dark" onclick="location.href='/wishtest'">위시리스트</button>
+
+					</div>
+					<div class="text-end" style="margin-left: 10px"
+						th:if="${session.MemberBean != null} and ${session.MemberBean.user_status.equals('게스트')}">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" id="headerbutton"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								<span th:text="${session.MemberBean.user_nickname} +' 님'"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu" id="main-dropdown">
+								<li><a class="dropdown-item" href="#"
+									onclick="messagePopup();  return false;">쪽지</a></li>
+								<li><a class="dropdown-item" href="MyBooking.Intercept">예약 내역</a></li>
+								<li><a class="dropdown-item" href="/passwordCheck.Intercept">회원 정보 수정</a></li>
+								<!-- 드롭다운 구분선 -->
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/logout.Intercept">로그아웃</a></li>
+							</ul>
+						</div>
+					</div>
+					<!--/* 호스트회원 */-->
+					<div class="text-end" style="margin-left: 10px"
+						th:if="${session.MemberBean != null} and ${session.MemberBean.user_status.equals('호스트')}">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" id="headerbutton"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								<span th:text="${session.MemberBean.user_nickname} +' 님'"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu" id="main-dropdown">
+								<li><a class="dropdown-item" href="#"
+									onclick="messagePopup();  return false;">쪽지</a></li>
+								<li><a class="dropdown-item" href="host_house_list.Interceptor">숙소 관리</a></li>
+								<li><a class="dropdown-item" href="/passwordCheck.Intercept">회원 정보 수정</a></li>
+								<!--/* 드롭다운 구분선 */-->
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/logout.Intercept">로그아웃</a></li>
+							</ul>
+						</div>
+
+						<!--/* 쪽지 팝업창 */-->
+						<script>
+							function messagePopup() {
+								window
+										.open("/msgwrite", "쪽지",
+												"width=580, height=600, top=200, left=700");
+							}
+						</script>
+
+					</div>
+				</div>
+			</div>
+		<script>
+			function messagePopup() {
+				window.open("/message.Intercept", "쪽지",
+					"width=580, height=600, top=200, left=700, directories=no, status=no");
+			}
+		</script>
+		</header>
+	</body>
+</div>
+</html>

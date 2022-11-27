@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head('메인 페이지') 수정하면 수정한 타이틀 들어갑니다 -->
+<th:block th:replace="/common/layout.html :: head('peer')"></th:block>
+<th:block th:replace="/common/header :: header"></th:block>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.css">
+
+<!-- 달력 -->
+<link rel="stylesheet" href="/css/daterangepicker.css">
+<style type="text/css">
+* {
+  font-family: 'NanumSquare';
+  box-sizing: border-box;
+}
+
+img {
+  vertical-align: middle;
+}
+
+/* Position the image container (needed to position the left and right arrows) */
+.container {
+}
+
+/* Hide the images by default */
+.mySlides {
+}
+
+/* Add a pointer when hovering over the thumbnail images */
+.cursor {
+  cursor: pointer;
+}
+
+/* Next & previous buttons */
+.prev,
+.next {
+  cursor: pointer;
+  top: 40%;
+  width: auto;
+  padding: 16px;
+  margin-top: -50px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover,
+.next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Container for image text */
+.caption-container {
+  text-align: center;
+  background-color: #222;
+  padding: 2px 16px;
+  color: white;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Six columns side by side */
+.column {
+  float: left;
+  width: 16.6%;
+}
+
+/* Add a transparency effect for thumnbail images */
+.demo {
+  opacity: 0.6;
+}
+
+.active,
+.demo:hover {
+  opacity: 1;
+}
+</style>
+
+
+<!-- 사용 하는곳 -->
+<div class="wrap">
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm-4" style="vertical-align: middle;">
+      <!-- 숙소이름 -->
+      <h2>[[${hcont.house_name}]]
+      <a th:href="@{/addwishlist.Intercept?house_num=}+${hcont.house_num}">
+				<img width="20" height="20" style="vertical-align: middle;" src="img/book/heartoff.png"></a></h2>
+      <!-- 숙소주소 -->
+      <h5 style="font-size: 10pt;">[[${hcont.house_address}]]</h5>
+      <p style="font-size: 25pt; margin-top: 50px;">예약하기</p>
+      <div>
+		<span class="badge bg-dark">CHECKIN</span>&nbsp&nbsp&nbsp&nbsp
+		<input type="date" id="checkin" name="checkin" class="form-label"><br>
+		<span class="badge bg-dark">CHECKOUT</span>&nbsp
+		<input type="date" id="checkout" name="checkout" class="form-label"
+			onchange="calc()">
+			
+		<form>
+			<input type="hidden" id="days" name="days" size="5" style="text-align: center;">
+		</form>
+	  </div>
+	  	
+		<form>
+			<span class="badge bg-dark">인원수</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			<select name="peoplenum" id="peoplenum"
+				class="form-control custom-select" style="width: 80px">
+				<script>
+					for (i = 1; i <= 10; i++) {
+						document.write("<option value='");
+						document.write(i + "'>");
+						document.write(i + "명</option>");
+					}
+				</script>
+			</select>
+		</form>
+		<br>
+		
+		<!-- 예약하기 버튼 -->
+		<div align="left"> 
+		<button id="iamportPayment" type="button"
+			onclick="iamportPayment" class="btn btn-success" style="font-weight: bold; width: 300px;">결제하기</button>
+		</div>
+      
+      <hr class="d-sm-none">
+    </div>
+    
+    <div class="col-sm-8">
+      <h2>시설사진</h2>
+      <div class="fakeimg">
+      
+      <!-- Carousel -->
+		<div id="demo" class="carousel slide" data-bs-ride="carousel">
+		
+		  <!-- Indicators/dots -->
+		  <div class="carousel-indicators">
+		    <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
+		    <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
+		    <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
+		  </div>
+		
+		  <!-- The slideshow/carousel -->
+		  <div class="carousel-inner" style="width: 700px; height: 700px;">
+		    <div class="carousel-item active">
+		      <img th:src="${FirstPhoto}" class="d-block w-100">
+		    </div>
+		    <div class="carousel-item" th:each="Pho : ${Photos}">
+		      <img th:src="${Pho}" class="d-block w-100">
+		    </div>
+		  </div>
+		
+		  <!-- Left and right controls/icons -->
+		  <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
+		    <span class="carousel-control-prev-icon"></span>
+		  </button>
+		  <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
+		    <span class="carousel-control-next-icon"></span>
+		  </button>
+		</div>
+      
+      </div>
+		
+	  <div>
+      <h2 class="mt-5">숙소정보</h2>
+      <a th:each="Info : ${detail}">
+      	<span class="badge rounded-pill bg-primary" style="vertical-align: middle;">[[${Info}]]</span>
+      </a>
+      </div>
+      
+      <!-- 일수 구하기 함수에 필요 -->
+			<form action="">
+				<br> 
+				<input type="hidden" id="years" size="5"> 
+				<br> 
+				<input type="hidden" id="months" size="5"> 
+				<br>
+			</form>
+	
+			<form>
+				<input type="hidden" id="house_num" th:value="${house_num}"> 
+				<input type="hidden" id="hprice_bweek" th:value="${hpcont.hprice_bweek}">
+				<input type="hidden" id="hprice_bweekend" th:value="${hpcont.hprice_bweekend}"> 
+				<input type="hidden" id="hprice_sweek" th:value="${hpcont.hprice_sweek}"> 
+				<input type="hidden" id="hprice_sweekend" th:value="${hpcont.hprice_sweekend}"> 
+			</form>
+    </div>
+  </div>
+</div>
+</div>
+		
+
+<script type="text/javascript">
+	function calc() {		// checkin, checkout 태그값 불러와서 날짜 차이값(=예약 일수) 계산
+		var sdd = $("#checkin").val();
+		var edd = $("#checkout").val();
+		var ar1 = sdd.split('-');
+		var ar2 = edd.split('-');
+		var da1 = new Date(ar1[0], ar1[1], ar1[2]);
+		var da2 = new Date(ar2[0], ar2[1], ar2[2]);
+		var dif = da2 - da1;
+		var cDay = 24 * 60 * 60 * 1000;// 시 * 분 * 초 * 밀리세컨
+		var cMonth = cDay * 30;// 월 만듬
+		var cYear = cMonth * 12; // 년 만듬
+		if (sdd && edd) {
+			document.getElementById('years').value = parseInt(dif / cYear)
+			document.getElementById('months').value = parseInt(dif / cMonth)
+			document.getElementById('days').value = parseInt(dif / cDay)
+		}
+	}
+</script>
+
+<script>
+	// house_num과 hprice_bweek를 불러오는 컨트롤러를 다시 만들어보자? 둘 다 값 안나옴. HouseViewController에서 값을 받기 때문에 BookingController에서 헛수고한 꼴이 된거다? 
+
+	var msg;
+
+	function iamportPayment() {
+
+		var days = $("#days").val();						// 예약 일수
+		var peoplenum = $("#peoplenum").val();				// 예약 인원수
+		var house_num = $("#house_num").val();				// 해당 숙소 번호
+		var hprice_bweek = $("#hprice_bweek").val();		// 해당 숙소 비성수기 평일
+		var hprice_bweekend = $("#hprice_bweekend").val();	// 해당 숙소 비성수기 주말
+		var hprice_sweek = $("#hprice_sweek").val();		// 해당 숙소 성수기 평일
+		var hprice_sweekend = $("#hprice_sweekend").val();	// 해당 숙소 성수기 주말
+		var checkin = $("#checkin").val();
+		var checkout = $("#checkout").val();
+		var checkin1 = new Date(checkin);					// String값으로 받은 input
+		var checkout1 = new Date(checkout);					// 데이터베이스에 날짜 형식으로 전달하기 위해 선언
+		
+		function calcCost(){		// 예약 일수*예약 인원수*숙소1박당가격 = 구하는 함수
+			var cost = days * peoplenum * hprice_bweek;
+		return cost;
+		}
+		
+		IMP.init('imp80310113'); // 아임포트 관리자 콘솔에서 확인한 '가맹점 식별코드' 입력
+		IMP.request_pay({ // param / rsp안의 변수들
+			pg : "html5_inicis", // pg사명
+			pay_method : "card", // 결제방식
+			merchant_uid : "99" + new Date().getTime(),// BOOK_NUM(BOOKING테이블,식별번호)
+			name : "peer", // "${HOUSE_NAME}"(HOUSE테이블)
+			amount : calcCost(), // "${HOUSE_PRICE}*day"(HOUSE_PRICE테이블)
+			buyer_email : "buyerEmail", // "${USER_EMAIL}"(user_info테이블)
+			buyer_name : "buyerName", // "${USER_NAME}"(user_info테이블)
+			buyer_tel : "01012345678", // "${USER_PHONE}"(user_info테이블)
+			buyer_addr : '서울'
+
+		}, function(rsp) { // callback
+			if (rsp.success) {
+
+				$.ajax({
+					url : 'bookingInsert.do',
+					type : 'post',
+					dataType : 'json',
+					data : {
+						"house_num" : house_num,
+//						"user_num" : user_num,
+						"checkin" : checkin1,
+						"checkout" : checkout1,
+						"house_price" : hprice_bweek,
+						"total_price" : rsp.paid_amount
+					},
+					success : function(result) {
+						alert(result);
+						if (result == 1) {
+						}
+					}
+				});
+				alert("결제가 완료되었습니다.");
+				location.replace("payresult");
+			} else {
+				msg = '결제에 실패하였습니다.';
+
+				alert(msg);
+			}
+		});
+	}
+</script>
+
+<!-- 결제api인 paying.js 파일 불러오기 -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#iamportPayment").click(function() {
+			iamportPayment(); // 버튼 클릭하면 호출, #iamportPayment라는 버튼태그는 iamportPayment()함수를 호출
+		});
+	}) // 버튼 클릭하면 실행
+</script>
+
+<!-- 아임포트 결제api를 호출할 준비 -->
+<!-- iamport.payment.js -->
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+<script type="text/javascript" src="/js/daterangepicker.js"></script>
+<script type="text/javascript" src="/js/moment.min.js"></script>
+
+<!-- FOOTER -->
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

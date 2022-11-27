@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="peer.dao.wishlist.WishlistMapper">
+
+	<insert id="addWl">
+		insert into wishlist values(#{user_num}, #{house_num})
+	</insert>
+	
+	<select id="getWl" resultType="peer.model.wishlist.WishlistBean">
+		select * from wishlist where user_num = #{user_num}
+	</select>
+	
+	<select id="getHnum" resultType="peer.model.house.HouseBean">
+		select * from house where house_num = #{house_num}
+	</select>
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="peer.dao.house.HouseDao">
+
+	<!-- 숙소 저장 -->
+	<insert id="saveHouse" parameterType="peer.model.house.HouseBean">
+		insert into house 
+		(house_num,user_num,house_name,house_address,house_x,house_y,house_photo,house_capacity,house_form,house_share,house_detail,house_detail2,house_authority)
+		values(house_seq.nextval,#{user_num},#{house_name},#{house_address},#{house_x},#{house_y},#{house_photo},#{house_capacity},#{house_form},#{house_share},#{house_detail},#{house_detail2},#{house_authority})
+	</insert>
+	
+	<insert id="savePrice" parameterType="peer.model.house.HousepriceBean">
+		insert into house_price(house_num,daterange,hprice_bweek,hprice_bweekend,hprice_sweek,hprice_sweekend)
+		values(house_seq.currval,#{daterange},#{hprice_bweek},#{hprice_bweekend},#{hprice_sweek},#{hprice_sweekend})
+	</insert>
+
+ 	 <!-- host house 총게시물 수 --> 
+	<select id="getListCount" resultType="int">
+		select count(*) from house where user_num=#{user_num}
+	</select>
+
+	<!-- host house 목록 (page번호를 전달받아서 startRow와 endRow를 구함) -->
+	<select id="getHosthouseList" parameterType="int" resultType="peer.model.house.HouseBean">
+	    <![CDATA[
+		select * from (select rownum rnum, house.* from  
+	  	(select * from house where user_num=#{user_num} order by HOUSE_NUM desc) house) 
+	    where rnum >= ((#{page}-1) * 10+1)  and rnum <= (#{page} * 10)
+		]]>
+	</select> 
+	
+	<!-- 숙소 보기 -->
+	<select id="getHouseCont" parameterType="int" resultType="peer.model.house.HouseBean">
+		select * from house where house_num=#{house_num}
+	</select>
+	
+	<select id="getHpriceCont" parameterType="int" resultType="peer.model.house.HousepriceBean">
+		select * from house_price where house_num=#{house_num}
+	</select>
+	
+	<!-- 등록된 숙소 삭제 -->
+	<delete id="houseDelete" parameterType="int">
+		delete from house where house_num=#{house_num}
+	</delete>
+	<delete id="hpriceDelete" parameterType="int">
+		delete from house_price where house_num=#{house_num}
+	</delete>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

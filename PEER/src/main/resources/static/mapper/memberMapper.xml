@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="peer.medel.member.MemberBean">
+
+	<insert id="insert">
+		insert into user_info
+		values(user_seq.nextval,#{user_email},#{user_pass},#{user_name},#{user_gender},#{user_age},#{user_phone},#{user_nickname},sysdate,#{user_status},1,#{user_birth})
+	</insert>
+
+	<select id="searchinfo"
+		resultType="peer.model.member.MemberBean">
+		select * from user_info where user_email=#{user_email} and
+		user_authority=1
+	</select>
+
+	<select id="nicknamecheck"
+		resultType="peer.model.member.MemberBean">
+		select * from user_info where
+		user_nickname=#{user_nickname}
+	</select>
+
+	<select id="searchinfoNum"
+		resultType="peer.model.member.MemberBean">
+		select * from user_info where user_num=#{user_num}
+	</select>
+
+	<update id="updateuser">
+		update user_info set
+		user_pass=#{user_pass},user_name=#{user_name},user_gender=#{user_gender},user_age=#{user_age},user_phone=#{user_phone},user_nickname=#{user_nickname},user_status=#{user_status},user_birth=#{user_birth}
+		where user_email = #{user_email}
+	</update>
+
+	<update id="deleteuser">
+		update user_info set user_authority=0 where user_num
+		= #{user_num}
+	</update>
+
+	<select id="searchid" resultType="peer.model.member.MemberBean">
+		select * from user_info where
+		user_phone=#{user_phone} and user_authority=1
+	</select>
+
+	<insert id="insertLog">
+		insert into userlog values (seq_userlog.nextval
+		,#{user_name} , #{user_num} ,
+		#{user_do} , #{user_date})
+	</insert>
+
+	<select id="getUser" resultType="peer.model.member.UserLog">
+		select DISTINCT
+		user_name,user_num from userlog
+	</select>
+
+	<select id="getlog" resultType="peer.model.member.UserLog">
+		select * from userlog where
+		user_num
+		= #{user_num}
+	</select>
+
+	<select id="totalLog" resultType="int">
+		select count(*) from userlog
+		where
+		user_num=#{user_num}
+	</select>
+
+	<select id="getUserChartInfo"
+		resultType="peer.model.member.Chart">
+		select count(user_do) as count_do,user_do FROM userlog
+		where
+		user_num=#{user_num} GROUP by user_do ORDER BY count_do desc
+	</select>
+
+	<select id="admininfo" resultType="peer.model.member.MemberBean">
+		select * from user_info where
+		user_email=#{user_email} and
+		user_authority=99
+	</select>
+
+</mapper>

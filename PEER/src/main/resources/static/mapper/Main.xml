@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="peer.dao.main.MainMapper">
+
+   	<!-- 검색 -->
+   	<select id="search" resultType="peer.model.main.MainBean">
+   	<![CDATA[
+  	select * from house where house_address LIKE '${loc}%'
+   	]]>
+   	</select>
+   	
+	<!-- 숙소 총 개수 -->
+	<select id="getListCount" resultType="int">
+      select count(*) from house
+   	</select>
+   	
+   	<!-- house 목록 (page번호를 전달받아서 startRow와 endRow를 구함) -->
+	 <select id="getHouseList" parameterType="int" resultType="peer.model.main.MainBean">
+	      <![CDATA[
+	      select * from (select rownum rnum, house.* from  
+	        (select * from house order by HOUSE_NUM desc) house) 
+	       where rnum >= ((#{page}-1) * 10+1)  and rnum <= (#{page} * 10)
+	      ]]>
+	  </select> 
+	 
+</mapper> 

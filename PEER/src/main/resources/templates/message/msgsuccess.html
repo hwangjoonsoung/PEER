@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/* head('메인 페이지') 수정하면 수정한 타이틀 들어갑니다 */-->
+<th:block th:replace="/common/layout.html :: head('쪽지')"></th:block>
+<body>
+<script th:inline="javascript">
+	alert("쪽지 전송 완료");
+	window.close();
+</script>
+</body>
+</html>

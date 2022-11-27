@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="/common/layout.html :: head('peer')"/>
+<th:block th:replace="/common/header.html :: header"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+
+<head>
+
+<style>
+
+.comment {
+		margin-top: 150px;
+		margin-bottom: 150px;
+		
+		font-family: 'NanumSquare';
+		font-weight: bolder;
+		font-size: 12pt;
+	}
+
+</style>
+
+<meta charset="UTF-8">
+
+</head>
+<body>
+<div style="position: relative; min-height: 720px;">
+	
+	<div class="comment" align="center">
+		<img src="/img/share/proposer.png" width="400px" style="margin-bottom: 40px;">
+	
+
+	<div class="content" align="center">
+		[[${propose.user_name}]]님에게 이미 쉐어 요청한 이력이 있습니다.<br>
+		취소하시겠습니까?
+	</div>
+	<br>
+	
+	<div class="button" align="center">
+		<form class="Choice" method="post" action="ProposeCancle.Intercept">
+			<input type="hidden" th:name="book_num" th:value="${propose.book_num}">
+			<input type="submit" class="btn btn-outline-danger" value="취소하기">
+			<input type="button" class="btn btn-outline-primary" value="돌아가기" th:onclick="history.go(-1)">
+		</form>
+	</div>
+	
+	</div>
+	
+</div>
+</body>
+
+<th:block th:replace="/common/footer :: footer"></th:block>
+</html>

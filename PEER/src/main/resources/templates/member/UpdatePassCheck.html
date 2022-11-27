@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header>
+	<th:block th:replace="/common/layout.html :: head('메인 페이지')"></th:block>
+</header>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<head>
+<style>
+div.dwrap {
+	display: none;
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$('div').fadeIn(700);
+	});
+</script>
+<script th:inline="javascript">
+	function checkingpass() {
+		var user_pass = $("#user_pass").val();
+		var passConfirm = $("#passConfirm").val();
+		if (passConfirm === user_pass) {
+			location.href = "/memberUpdate.Intercept"
+		} else {
+			$("#text").text("비밀번호가 일치하지 않습니다")
+		}
+	}
+</script>
+<meta charset="UTF-8">
+</head>
+<th:block th:replace="/common/header :: header"></th:block>
+<body>
+	<div class="dwrap">
+		<div class="container mt-5"
+			style="min-height: 500px; padding-top: 30px; padding-left: 200px;"
+			align="center">
+			<div class="row">
+				<div class="col-sm-4">
+					<h2></h2>
+					<h5></h5>
+					<div class="fakeimg">
+						<img style="width: 200px;" src="/img/locker.jpg">
+					</div>
+				</div>
+				<div class="col-sm-8">
+					<h2></h2>
+					<h5></h5><br>
+					<div class="fakeimg">
+						<table>
+							<tr>비밀번호 재확인
+							</tr>
+							<tr>
+								<td><input class="form-control" type="text"
+									disabled="disabled" th:value="${session.MemberBean.user_email}">
+									<input type="hidden" th:value="${session.MemberBean.user_pass}"
+									id="user_pass" required="required"></td>
+							</tr>
+							<tr>
+								<td><input class="form-control" type="password"
+									id="passConfirm"></td>
+
+							</tr>
+							<tr>
+								<td><div id="text" style="color: red;"></div></td>
+							</tr>
+							<tr>
+								<td colspan="2"><input type="button" id="passcheck"
+									value="확인" class="btn btn-outline-primary"
+									onclick="checkingpass()"></td>
+							</tr>
+						</table>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<footer class="fixed-bottom">
+	<th:block th:replace="/common/footer :: footer"></th:block>
+</footer>
+</html>
